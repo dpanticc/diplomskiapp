@@ -14,7 +14,7 @@ import { ErrorStateMatcher } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { LoginService } from './services/login/login.service';
+import { LoginService } from 'src/app/services/login/login.service';
 import { HttpClientModule } from '@angular/common/http';
 
 
@@ -30,8 +30,8 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
   standalone: true,
   imports: [FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatIconModule, MatButtonModule, HttpClientModule ],
   providers: [LoginService],
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css']
 })
 
 export class AppComponent implements OnInit{
