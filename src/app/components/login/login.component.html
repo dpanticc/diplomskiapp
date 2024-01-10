@@ -1,5 +1,6 @@
+@if (promenljiva) {
 <div class = "form-container">
-  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmitLogin()">
     <div class = "form-items">
         <mat-form-field class="example-full-width" id = "username">
             <mat-label>Username</mat-label>
@@ -7,11 +8,42 @@
              placeholder="Ex. pat@example.com">
         </mat-form-field>
         <mat-form-field>
-            <input matInput type="password" placeholder="Password" formControlName="password" required>
+            <input matInput [type]="hidePassword? 'password' : 'text'" placeholder="Password" formControlName="password" required>
             <mat-icon matSuffix (click)="togglePasswordVisibility()">{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
         </mat-form-field>
         <button mat-raised-button>Login</button>
-        <p>Don't have an account? <a routerLink="/register">Sign up here</a>.</p>
+        <p>Don't have an account? <a (click)="toggleForm()">Sign up here</a>.</p>
     </div>
   </form>
 </div>
+} @else {
+    <div class="form-container">
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmitRegister()">
+          <div class="form-items">
+            <mat-form-field class="example-full-width">
+              <mat-label>Username</mat-label>
+              <input type="text" matInput formControlName="username" [errorStateMatcher]="matcher" placeholder="Enter your username">
+            </mat-form-field>
+            <mat-form-field class="example-full-width">
+              <mat-label>Email</mat-label>
+              <input type="email" matInput formControlName="email" [errorStateMatcher]="matcher" placeholder="Enter your email">
+            </mat-form-field>
+            <mat-form-field class="example-full-width">
+              <mat-label>First Name</mat-label>
+              <input type="text" matInput formControlName="firstName" [errorStateMatcher]="matcher" placeholder="Enter your first name">
+            </mat-form-field>
+            <mat-form-field class="example-full-width">
+              <mat-label>Last Name</mat-label>
+              <input type="text" matInput formControlName="lastName" [errorStateMatcher]="matcher" placeholder="Enter your last name">
+            </mat-form-field>
+            <mat-form-field class="example-full-width" id="password">
+              <mat-label>Password</mat-label>
+              <input type="password" matInput [type]="hidePassword? 'password' : 'text'" formControlName="password" [errorStateMatcher]="matcher" placeholder="Enter your password">
+              <mat-icon matSuffix (click)="togglePasswordVisibility()">{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+            </mat-form-field>
+            <button mat-raised-button type="submit">Register</button>
+            <p>Already have an account? <a (click)="toggleForm()">Login here</a>.</p>
+          </div>
+        </form>
+      </div>
+      }

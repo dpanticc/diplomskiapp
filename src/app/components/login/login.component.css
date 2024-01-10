@@ -1,12 +1,17 @@
 
 /* Styles for the container */
 .form-container {
+    background-image: url('../../../assets/wallpaperapp.jpg');
+    background-repeat: no-repeat; /* Prevent image repetition */
+    background-size: cover; /* Scale image to cover entire container */
+    
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     height: 100vh; /* Adjust the height as needed */
     background-color: #ffffff; /* Set background color */
+    width: 100%; /* Full screen width */
 
   }
   

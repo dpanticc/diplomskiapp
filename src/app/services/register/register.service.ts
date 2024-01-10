@@ -8,11 +8,11 @@ export class RegisterService {
 
   constructor(private http: HttpClient) { }
 
-  register(register: any){
+  register(registerData: any){
 
     const registerUrl = "http://localhost:8080/api/auth/register";
-    const body = register;
-  
-    return this.http.post<any>(registerUrl, body);
+
+    console.log(registerData);
+    return this.http.post<any>(registerUrl, registerData);
   }
 }
