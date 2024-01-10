@@ -1,4 +1,3 @@
-
 /* Styles for the container */
 .form-container {
     display: flex;
@@ -7,7 +6,6 @@
     justify-content: center;
     height: 100vh; /* Adjust the height as needed */
     background-color: #ffffff; /* Set background color */
-
   }
   
   /* Styles for the form */
@@ -22,33 +20,35 @@
     align-items: center;
     justify-content: center;
   }
-  #username{
-    margin-top: 20px;
-  }
-  .mat-form-field {
-    width: 200%;
-    margin-bottom: 20px; /* Add some space between form fields */
-  }
-
- .form-items{
+  
+  /* Additional styling for the form items */
+  .form-items {
     display: flex;
     flex-direction: column;
     align-items: stretch;
     justify-content: center;
- }
+  }
+  
+  /* Additional styling for the form fields */
+  .mat-form-field {
+    width: 100%; /* Make the form fields full width */
+    margin-bottom: 20px; /* Add some space between form fields */
+  }
   
   /* Additional styling for the button */
   button {
     width: 50%; /* Make the button full width */
     align-self: center;
   }
-
-  p{
+  
+  /* Additional styling for the link and paragraph */
+  p {
     margin-top: 25px;
     align-self: center;
     color: white;
   }
   
-  a{
+  a {
     color: #7b1fa2;
   }
+  

@@ -1,0 +1,17 @@
+<div class = "form-container">
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <div class = "form-items">
+        <mat-form-field class="example-full-width" id = "username">
+            <mat-label>Username</mat-label>
+            <input type="email"  matInput formControlName="username" [errorStateMatcher]="matcher"
+             placeholder="Ex. pat@example.com">
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput type="password" placeholder="Password" formControlName="password" required>
+            <mat-icon matSuffix (click)="togglePasswordVisibility()">{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+        </mat-form-field>
+        <button mat-raised-button>Login</button>
+        <p>Don't have an account? <a routerLink="/register">Sign up here</a>.</p>
+    </div>
+  </form>
+</div>
