@@ -1,11 +1,10 @@
-@if (promenljiva) {
+@if (switchForm) {
 <div class = "form-container">
   <form [formGroup]="loginForm" (ngSubmit)="onSubmitLogin()">
     <div class = "form-items">
-        <mat-form-field class="example-full-width" id = "username">
+        <mat-form-field class="example-full-width" id = "username" hideRequiredMarker>
             <mat-label>Username</mat-label>
-            <input type="email"  matInput formControlName="username" [errorStateMatcher]="matcher"
-             placeholder="Ex. pat@example.com">
+            <input type="email"  matInput formControlName="username" [errorStateMatcher]="matcher">
         </mat-form-field>
         <mat-form-field>
             <input matInput [type]="hidePassword? 'password' : 'text'" placeholder="Password" formControlName="password" required>

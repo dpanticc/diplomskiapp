@@ -16,9 +16,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { LoginService } from 'src/app/services/login/login.service';
 import { HttpClientModule } from '@angular/common/http';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { RegisterService } from 'src/app/services/register/register.service';
+import { JWT_OPTIONS, JwtHelperService } from '@auth0/angular-jwt';
 
 
 export class MyErrorStateMatcher implements ErrorStateMatcher {
@@ -32,18 +33,18 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
   selector: 'app-login',
   standalone: true,
   imports: [FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatIconModule, MatButtonModule, HttpClientModule, RouterModule, CommonModule ],
-  providers: [LoginService, RegisterService],
+  providers: [LoginService, RegisterService, JwtHelperService, { provide: JWT_OPTIONS, useValue: JWT_OPTIONS }],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
 
 export class LoginComponent implements OnInit{
   
-  public promenljiva:boolean = true;
+  public switchForm:boolean = true;
   hidePassword: boolean = true;
 
 
-  constructor(private formBuilder: FormBuilder, private loginService: LoginService, private registerService: RegisterService) {
+  constructor(private formBuilder: FormBuilder, private loginService: LoginService, private registerService: RegisterService, private jwtHelper: JwtHelperService, private router: Router) {
     this.loginForm = this.formBuilder.group({
       username: ['', Validators.required],
       password: ['', Validators.required],
@@ -55,6 +56,7 @@ export class LoginComponent implements OnInit{
         lastName: ['', Validators.required],
         password: ['', [Validators.required, Validators.minLength(6)]],
       });
+    
   }
 
   registerForm!: FormGroup;
@@ -77,7 +79,26 @@ export class LoginComponent implements OnInit{
     if(this.loginForm.valid){
       this.loginService.login(this.loginForm.value).subscribe(
         (response) => {
-          console.log('Logged in successfully!', response);
+            console.log('Logged in successfully!', response);
+
+            // Decode the JWT to access claims
+            const decodedToken = this.jwtHelper.decodeToken(response.access_token);
+    
+            // Access the roles claim
+            const roles = decodedToken.roles;
+            localStorage.setItem("access_token", response.access_token);
+            localStorage.setItem("refresh_token", response.refresh_token);
+
+            //check if the user is an admin or a regular user
+            if (roles.includes('ADMIN')) {
+              console.log('User is an admin');
+              // Redirect or perform actions for admin
+              this.router.navigate(['/admin-home']);
+            } else {
+              console.log('User is a regular user');
+              // Redirect or perform actions for regular user
+              this.router.navigate(['/home']);
+            }
         }
       )
     }else{
@@ -87,12 +108,16 @@ export class LoginComponent implements OnInit{
   };
 
   onSubmitRegister(){
-    
+        
     if(this.registerForm.valid){
         this.registerService.register(this.registerForm.value).subscribe(
           (response) => {
-            console.log('Registered in successfully!', response);
-          }
+            console.log(response);
+          },
+            (error) => {
+            console.log(error);
+            }
+          
         )
       }else{
   
@@ -100,7 +125,7 @@ export class LoginComponent implements OnInit{
   }
 
   toggleForm(){
-    if(this.promenljiva == true){
+    if(this.switchForm == true){
         this.loginForm = this.formBuilder.group({
             username: ['', Validators.required],
             password: ['', Validators.required],
@@ -115,7 +140,7 @@ export class LoginComponent implements OnInit{
             password: ['', [Validators.required, Validators.minLength(6)]],
           });
     }
-    this.promenljiva = !this.promenljiva;
+    this.switchForm = !this.switchForm;
 
     if(this.hidePassword == false){
         this.hidePassword = true;
