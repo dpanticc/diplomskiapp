@@ -157,6 +157,6 @@ export class LoginComponent implements OnInit{
   }
 
   openDialog(){
-    this.dialogService.getMessage("Naslov");
+    this.dialogService.getMessage("asadsadsadsadsdsadadadadadsadaasadadaddasd");
   }
 }

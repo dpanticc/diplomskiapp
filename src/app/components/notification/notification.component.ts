@@ -12,9 +12,7 @@ import { MAT_SNACK_BAR_DATA, MatSnackBar  } from '@angular/material/snack-bar';
 })
 export class NotificationComponent {
 
-  constructor(@Inject(MAT_SNACK_BAR_DATA) public data1: any, private _snackBar: MatSnackBar
-  ) 
-  {}
+  constructor(@Inject(MAT_SNACK_BAR_DATA) public data1: any, private _snackBar: MatSnackBar) {}
 
   dismiss(){
     this._snackBar.dismiss()
