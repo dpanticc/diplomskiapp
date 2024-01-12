@@ -20,6 +20,8 @@ import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { RegisterService } from 'src/app/services/register/register.service';
 import { JWT_OPTIONS, JwtHelperService } from '@auth0/angular-jwt';
+import { NotificationService } from 'src/app/services/notification/notification.service';
+import { DialogService } from 'src/app/services/dialog/dialog.service';
 
 
 export class MyErrorStateMatcher implements ErrorStateMatcher {
@@ -33,7 +35,7 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
   selector: 'app-login',
   standalone: true,
   imports: [FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatIconModule, MatButtonModule, HttpClientModule, RouterModule, CommonModule ],
-  providers: [LoginService, RegisterService, JwtHelperService, { provide: JWT_OPTIONS, useValue: JWT_OPTIONS }],
+  providers: [LoginService, RegisterService, JwtHelperService, { provide: JWT_OPTIONS, useValue: JWT_OPTIONS }, NotificationService, DialogService],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
@@ -44,7 +46,8 @@ export class LoginComponent implements OnInit{
   hidePassword: boolean = true;
 
 
-  constructor(private formBuilder: FormBuilder, private loginService: LoginService, private registerService: RegisterService, private jwtHelper: JwtHelperService, private router: Router) {
+  constructor(private formBuilder: FormBuilder, private loginService: LoginService, private registerService: RegisterService, 
+    private jwtHelper: JwtHelperService, private router: Router, private notificationService: NotificationService, private dialogService: DialogService) {
     this.loginForm = this.formBuilder.group({
       username: ['', Validators.required],
       password: ['', Validators.required],
@@ -58,7 +61,6 @@ export class LoginComponent implements OnInit{
       });
     
   }
-
   registerForm!: FormGroup;
   loginForm!: FormGroup;
   
@@ -80,7 +82,7 @@ export class LoginComponent implements OnInit{
       this.loginService.login(this.loginForm.value).subscribe(
         (response) => {
             console.log('Logged in successfully!', response);
-
+            this.notificationService.getMessage("Welcome!")
             // Decode the JWT to access claims
             const decodedToken = this.jwtHelper.decodeToken(response.access_token);
     
@@ -99,12 +101,17 @@ export class LoginComponent implements OnInit{
               // Redirect or perform actions for regular user
               this.router.navigate(['/home']);
             }
+        },
+        (error) => {
+          console.error("Login failed", error);
+          this.notificationService.getMessage("Invalid username or password");
         }
-      )
+
+      );
     }else{
-
+      console.error("Login failed");
+      this.notificationService.getMessage("Invalid username or password");   
     }
-
   };
 
   onSubmitRegister(){
@@ -113,14 +120,16 @@ export class LoginComponent implements OnInit{
         this.registerService.register(this.registerForm.value).subscribe(
           (response) => {
             console.log(response);
+            this.notificationService.getMessage("Successfuly registered. Please verify your email!")
+            this.switchForm = !this.switchForm;
           },
             (error) => {
             console.log(error);
-            }
-          
+            this.notificationService.getMessage("Invalid register information!");
+          }
         )
       }else{
-  
+        this.notificationService.getMessage("Invalid register information!");
       }  
   }
 
@@ -145,5 +154,9 @@ export class LoginComponent implements OnInit{
     if(this.hidePassword == false){
         this.hidePassword = true;
     }
+  }
+
+  openDialog(){
+    this.dialogService.getMessage("Naslov");
   }
 }

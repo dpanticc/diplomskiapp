@@ -14,7 +14,10 @@
         <p>Don't have an account? <a (click)="toggleForm()">Sign up here</a>.</p>
     </div>
   </form>
+  <button (click)="openDialog()">Dugme</button>
+
 </div>
+
 } @else {
     <div class="form-container">
         <form [formGroup]="registerForm" (ngSubmit)="onSubmitRegister()">

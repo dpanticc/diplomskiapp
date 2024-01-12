@@ -1,0 +1,21 @@
+.dismiss-button{
+    align-self: center;
+    margin-top: 10px;
+    max-height: 25px;
+}
+
+.text{
+    align-self: center;
+    margin-top: 5px;
+    font-size: large;
+
+}
+
+.form-items{
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+ }
+
+ 
