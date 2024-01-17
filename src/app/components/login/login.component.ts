@@ -83,6 +83,9 @@ export class LoginComponent implements OnInit{
         (response) => {
             console.log('Logged in successfully!', response);
             this.notificationService.getMessage("Welcome!")
+
+            const username = this.loginForm.get('username')?.value;
+            localStorage.setItem('username', username);
             // Decode the JWT to access claims
             const decodedToken = this.jwtHelper.decodeToken(response.access_token);
     
@@ -90,7 +93,7 @@ export class LoginComponent implements OnInit{
             const roles = decodedToken.roles;
             localStorage.setItem("access_token", response.access_token);
             localStorage.setItem("refresh_token", response.refresh_token);
-
+            
             //check if the user is an admin or a regular user
             if (roles.includes('ADMIN')) {
               console.log('User is an admin');
@@ -154,9 +157,5 @@ export class LoginComponent implements OnInit{
     if(this.hidePassword == false){
         this.hidePassword = true;
     }
-  }
-
-  openDialog(){
-    this.dialogService.getMessage("asadsadsadsadsdsadadadadadsadaasadadaddasd");
   }
 }
