@@ -8,35 +8,44 @@ import { RouterOutlet } from '@angular/router';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import { LogoutService } from 'src/app/services/logout/logout.service';
 import { Router, RouterModule } from '@angular/router';
+import { DialogComponent } from '../dialog/dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [ MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule, HttpClientModule,  RouterOutlet, MatToolbarModule, RouterModule],
+  imports: [ MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule, HttpClientModule,  RouterOutlet, MatToolbarModule, RouterModule, DialogComponent],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css',
   providers: [LogoutService],
 
 })
 export class NavbarComponent {
-  constructor(private logoutService: LogoutService, private router: Router){
+  constructor(private logoutService: LogoutService, private router: Router, private dialog: MatDialog) {}
 
-  }
-  title = 'reservationapp';
-  
-  logout(){
-    const username = localStorage.getItem('username');
-    this.logoutService.logout(username).subscribe(
-      (response)=>{
-        console.log(response);
-        console.log('Logout successful');
-        localStorage.clear();
-        this.router.navigate(["/"]);
+  logout() {
+    const dialogRef = this.dialog.open(DialogComponent, {
+      data: {
+        message: 'Are you sure you want to logout?',
       },
-      (error)=>{
-        console.log(error);
-      }     
-    )
+    });
+
+    dialogRef.afterClosed().subscribe((result:boolean) => {
+      if (result) {
+        const username = localStorage.getItem('username');
+        this.logoutService.logout(username).subscribe(
+          (response) => {
+            console.log(response);
+            console.log('Logout successful');
+            localStorage.clear();
+            this.router.navigate(['/']);
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
+      }
+    });
   }
 }

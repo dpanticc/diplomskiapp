@@ -18,8 +18,13 @@ import {
   styleUrl: './dialog.component.css'
 })
 export class DialogComponent {
-  constructor(@Inject(MAT_DIALOG_DATA)public data:any,  public dialog: MatDialog) {}
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any, public dialogRef: MatDialogRef<DialogComponent>) {}
 
+  onNoClick(): void {
+    this.dialogRef.close(false);
+  }
 
+  onYesClick(): void {
+    this.dialogRef.close(true);
+  }
 }
-

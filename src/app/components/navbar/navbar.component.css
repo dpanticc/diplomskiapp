@@ -5,3 +5,7 @@
 .hover-click:hover{
     cursor: pointer;
 }
+
+#logout{
+  margin-right: 6px;
+}

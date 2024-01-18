@@ -12,6 +12,7 @@ bootstrapApplication(AppComponent, {
         provideRouter(routes),
         provideHttpClient(),
         JwtHelperService,
-        { provide: JWT_OPTIONS, useValue: JWT_OPTIONS }
+        { provide: JWT_OPTIONS, useValue: JWT_OPTIONS },
+        
     ]
 });
