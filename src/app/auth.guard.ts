@@ -14,10 +14,10 @@ export class AuthGuard implements CanActivate {
     console.log('Is Admin:', this.loginService.isAdmin());
     
     if (this.loginService.isAuthenticated()) {
-      console.log(route);
+      console.log("truetue");
       return true;
     } else {
-      console.log(route);
+      console.log("falsefase");
       this.router.navigate(['/']);
       return false; 
     }
