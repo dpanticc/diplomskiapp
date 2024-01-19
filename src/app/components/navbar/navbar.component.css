@@ -9,3 +9,24 @@
 #logout{
   margin-right: 6px;
 }
+
+.example-container {
+  width: 500px;
+  height: 100%;
+    background-color: transparent; /* Set to transparent or remove for no background */
+
+}
+
+.example-sidenav-content {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+
+}
+
+.example-sidenav {
+  padding: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+
+}

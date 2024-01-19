@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -10,18 +10,25 @@ import { LogoutService } from 'src/app/services/logout/logout.service';
 import { Router, RouterModule } from '@angular/router';
 import { DialogComponent } from '../dialog/dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { SidebarComponent } from '../sidebar/sidebar.component';
+import { MatDrawer } from '@angular/material/sidenav';
+import { MatSidenavModule } from '@angular/material/sidenav'; // Correct import
+
 
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [ MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule, HttpClientModule,  RouterOutlet, MatToolbarModule, RouterModule, DialogComponent],
+  imports: [ MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule, HttpClientModule,  RouterOutlet, MatToolbarModule, RouterModule, DialogComponent, SidebarComponent, MatSidenavModule],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css',
   providers: [LogoutService],
 
 })
 export class NavbarComponent {
+
+  @ViewChild('drawer') drawer: MatDrawer | undefined;
+  
   constructor(private logoutService: LogoutService, private router: Router, private dialog: MatDialog) {}
 
   logout() {
@@ -48,4 +55,6 @@ export class NavbarComponent {
       }
     });
   }
+ 
+
 }
