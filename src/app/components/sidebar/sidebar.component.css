@@ -1,11 +1,23 @@
-.vertical-buttons {
-    display: flex;
-    flex-direction: column;
+a{
+    width: 180px;
+    box-sizing: border-box;
+}
 
-  }
-  
-  .vertical-buttons button {
-    margin-bottom: 20px; 
-    width: 100px;
-  }
-  
+.mdc-list {
+    padding: 0px;
+}
+
+.nav-list-item {
+    margin-top: 20px;
+    width: 180px;
+    box-sizing: border-box;
+    
+}
+
+.active-link {
+    background-color: rgba(124, 123, 124, 0.5); 
+    border-right: 2px solid rgba(255, 252, 252); 
+    
+}
+
+

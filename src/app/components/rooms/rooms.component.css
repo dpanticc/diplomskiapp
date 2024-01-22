@@ -1,0 +1,45 @@
+.example-card {
+    width: 20%;
+    margin-bottom: 8px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .mat-card-title-group {
+    display: flex;
+    flex-direction: row; /* Align the title and subtitle in a row */
+    justify-content: space-between; /* Spread elements horizontally */
+    width: 100%; /* Make sure the width is 100% */
+  }
+  
+  .mat-card-subtitle {
+    margin-left: auto; /* Push the subtitle to the right */
+  }
+  
+  .mat-card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; 
+  }
+  
+  .container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: stretch;
+    gap: 8px;
+  }
+  
+  .buttons {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%; /* Make sure buttons take full width */
+  }
+  
+  button {
+    margin-left: 8px; /* Add space between buttons */
+  }
+  
+  p{
+    margin-top: 20px;
+  }

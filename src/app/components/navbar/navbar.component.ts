@@ -12,7 +12,7 @@ import { DialogComponent } from '../dialog/dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { MatDrawer } from '@angular/material/sidenav';
-import { MatSidenavModule } from '@angular/material/sidenav'; // Correct import
+import { MatSidenavModule } from '@angular/material/sidenav';
 
 
 

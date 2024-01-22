@@ -1,6 +1,4 @@
-
-
-  <mat-toolbar color="primary">
+<mat-toolbar color="primary">
     <mat-toolbar-row>
       <button mat-icon-button class="example-icon" (click)="drawer.toggle()" aria-label="Toggle sidebar">
         <mat-icon>menu</mat-icon>
@@ -12,9 +10,16 @@
     </mat-toolbar-row>
   </mat-toolbar>
 
+  <!-- navbar.component.html -->
 <mat-drawer-container class="example-container">
   <mat-drawer #drawer class="example-sidenav" mode="side">
+    <!-- Include the sidebar content directly within the navbar -->
     <app-sidebar></app-sidebar>
   </mat-drawer>
+  
+  <div class="content-area">
+    <router-outlet></router-outlet>
+
+  </div>
   
 </mat-drawer-container>
