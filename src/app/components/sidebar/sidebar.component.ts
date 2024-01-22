@@ -4,7 +4,7 @@ import {MatTabsModule} from '@angular/material/tabs';
 import { MatButtonModule } from '@angular/material/button';
 import { ThemePalette } from '@angular/material/core';
 import { CommonModule } from '@angular/common';
-import { LoginService } from 'src/app/services/login/login.service';
+import { LoginService } from 'src/app/services/user/login.service';
 import { MatListModule } from '@angular/material/list';
 import { Router, RouterModule } from '@angular/router';
 
