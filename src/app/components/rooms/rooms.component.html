@@ -1,132 +1,38 @@
 <div class="container">
-        <mat-card class="example-card">
-          <mat-card-header>
-            <mat-card-title-group class="mat-card-title-group">
-              <mat-card-title>B 401</mat-card-title>
-              <mat-card-subtitle>Drugi sprat</mat-card-subtitle>
-            </mat-card-title-group>
-          </mat-card-header>
-          <mat-card-content>
-            <p>TekstTekst</p>
-            <div class="buttons">
-              <button mat-button color="primary">Edit</button>
-              <button mat-button color="warn">Delete</button>
-            </div>
-          </mat-card-content>
-        </mat-card>
-      
-        <mat-card class="example-card">
-            <mat-card-header>
-              <mat-card-title-group class="mat-card-title-group">
-                <mat-card-title>B 401</mat-card-title>
-                <mat-card-subtitle>Drugi sprat</mat-card-subtitle>
-              </mat-card-title-group>
-            </mat-card-header>
-            <mat-card-content>
-              <p>TekstTekst</p>
-              <div class="buttons">
-                <button mat-button color="primary">Edit</button>
-                <button mat-button color="warn">Delete</button>
-              </div>
-            </mat-card-content>
-          </mat-card>
+    <!-- Background Card -->
+    <mat-card class="background-card">
+      <mat-card-content>
+        <mat-card-header>
 
-          <mat-card class="example-card">
-            <mat-card-header>
-              <mat-card-title-group class="mat-card-title-group">
-                <mat-card-title>B 401</mat-card-title>
-                <mat-card-subtitle>Drugi sprat</mat-card-subtitle>
-              </mat-card-title-group>
-            </mat-card-header>
-            <mat-card-content>
-              <p>TekstTekst</p>
-              <div class="buttons">
-                <button mat-button color="primary">Edit</button>
-                <button mat-button color="warn">Delete</button>
-              </div>
-            </mat-card-content>
-          </mat-card>
-
-          <mat-card class="example-card">
-            <mat-card-header>
-              <mat-card-title-group class="mat-card-title-group">
-                <mat-card-title>B 401</mat-card-title>
-                <mat-card-subtitle>Drugi sprat</mat-card-subtitle>
-              </mat-card-title-group>
-            </mat-card-header>
-            <mat-card-content>
-              <p>TekstTekst</p>
-              <div class="buttons">
-                <button mat-button color="primary">Edit</button>
-                <button mat-button color="warn">Delete</button>
-              </div>
-            </mat-card-content>
-          </mat-card>
-
-
-          <mat-card class="example-card">
-            <mat-card-header>
-              <mat-card-title-group class="mat-card-title-group">
-                <mat-card-title>B 401</mat-card-title>
-                <mat-card-subtitle>Drugi sprat</mat-card-subtitle>
-              </mat-card-title-group>
-            </mat-card-header>
-            <mat-card-content>
-              <p>TekstTekst</p>
-              <div class="buttons">
-                <button mat-button color="primary">Edit</button>
-                <button mat-button color="warn">Delete</button>
-              </div>
-            </mat-card-content>
-          </mat-card>
-
-          <mat-card class="example-card">
-            <mat-card-header>
-              <mat-card-title-group class="mat-card-title-group">
-                <mat-card-title>B 401</mat-card-title>
-                <mat-card-subtitle>Drugi sprat</mat-card-subtitle>
-              </mat-card-title-group>
-            </mat-card-header>
-            <mat-card-content>
-              <p>TekstTekst</p>
-              <div class="buttons">
-                <button mat-button color="primary">Edit</button>
-                <button mat-button color="warn">Delete</button>
-              </div>
-            </mat-card-content>
-          </mat-card>
-
-
-          <mat-card class="example-card">
-            <mat-card-header>
-              <mat-card-title-group class="mat-card-title-group">
-                <mat-card-title>B 401</mat-card-title>
-                <mat-card-subtitle>Drugi sprat</mat-card-subtitle>
-              </mat-card-title-group>
-            </mat-card-header>
-            <mat-card-content>
-              <p>TekstTekst</p>
-              <div class="buttons">
-                <button mat-button color="primary">Edit</button>
-                <button mat-button color="warn">Delete</button>
-              </div>
-            </mat-card-content>
-          </mat-card>
-
-
-          <mat-card class="example-card">
-            <mat-card-header>
-              <mat-card-title-group class="mat-card-title-group">
-                <mat-card-title>B 401</mat-card-title>
-                <mat-card-subtitle>Drugi sprat</mat-card-subtitle>
-              </mat-card-title-group>
-            </mat-card-header>
-            <mat-card-content>
-              <p>TekstTekst</p>
-              <div class="buttons">
-                <button mat-button color="primary">Edit</button>
-                <button mat-button color="warn">Delete</button>
-              </div>
-            </mat-card-content>
-          </mat-card>
+        <mat-card-title class="headerCard">Manage Rooms</mat-card-title>
+        <span class="spacer"></span>
+          <!-- Search Field -->
+          <mat-form-field>
+            <input matInput placeholder="Search..." [formControl]="searchFormControl">
+          </mat-form-field>
+        </mat-card-header>
+          <div class="roomCard">
+            <!-- Room Cards -->
+            <mat-card class="example-card" *ngFor="let room of rooms">
+              <mat-card-header>
+                <mat-card-title-group class="mat-card-title-group">
+                  <mat-card-title>{{ room.name }}</mat-card-title>
+                  <mat-card-subtitle><p>Floor: {{ room.floor }}</p></mat-card-subtitle>
+                </mat-card-title-group>
+              </mat-card-header>
+              <mat-card-content>
+                <p><strong>Capacity:</strong> {{ room.capacity }}</p>
+                <p><strong>Details:</strong> {{ room.details }}</p>
+                <div class="buttons">
+                  <!-- Edit and Delete Buttons -->
+                  <button mat-button color="primary">Edit</button>
+                  <button mat-button color="warn">Delete</button>
+                </div>
+              </mat-card-content>
+            </mat-card>
+        
+        </div>
+      </mat-card-content>
+    </mat-card>
+    
 </div>

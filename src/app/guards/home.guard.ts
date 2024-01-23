@@ -1,7 +1,7 @@
 // role.guard.ts
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { LoginService } from '../services/login/login.service';
+import { LoginService } from '../services/user/login.service';
 
 @Injectable({
   providedIn: 'root'

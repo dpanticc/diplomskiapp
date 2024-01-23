@@ -1,0 +1,59 @@
+/* users.component.css */
+
+.demo-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  box-shadow: 0px 10px 40px rgba(0.5, 0.5, 0.5, 0.5); /* Top shadow */
+  border-radius: 10px; /* Adjust the border-radius value as needed */
+  
+}
+
+
+
+
+.mat-mdc-row{
+  border-bottom: 1px solid #555252; /* Adjust the color as needed */
+}
+
+.mat-mdc-cell {
+  border-right: 1px solid #555252; /* Adjust the color as needed */
+}
+
+.mat-mdc-cell:last-child {
+  border-right: none; /* Remove right border for the last cell in each row */
+}
+
+.mat-mdc-row:hover {
+  background-color: rgba(124, 123, 124, 0.5); /* Adjust the background color for hover effect */
+}
+
+.mat-mdc-cell.delete-cell {
+  text-align: center; /* Center the content */
+}
+
+.mat-mdc-cell.delete-cell button {
+  color: #e53935; /* Button text color */
+  transition: background-color 0.3s ease; /* Add a smooth transition effect */
+}
+
+.mat-mdc-cell.delete-cell button:hover {
+  color: white;
+  background-color: #c62828; /* Change background color on hover */
+}
+
+.example-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.search-container {
+  display: flex;
+  justify-content: flex-end; /* Align items to the right */
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}

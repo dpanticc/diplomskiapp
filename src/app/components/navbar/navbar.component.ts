@@ -6,7 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterOutlet } from '@angular/router';
 import {MatToolbarModule} from '@angular/material/toolbar';
-import { LogoutService } from 'src/app/services/logout/logout.service';
+import { LogoutService } from 'src/app/services/user/logout.service';
 import { Router, RouterModule } from '@angular/router';
 import { DialogComponent } from '../dialog/dialog.component';
 import { MatDialog } from '@angular/material/dialog';

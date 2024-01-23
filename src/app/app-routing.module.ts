@@ -7,9 +7,9 @@ import { AuthGuard } from './guards/auth.guard';
 import { HomeGuard } from './guards/home.guard';
 import { RoleGuard } from './guards//role.guard.';
 import { UserGuard } from './guards//user.guard';
-import { UsersComponent } from './components/users/users.component';
 import { ReservationsComponent } from './components/reservations/reservations.component';
 import { RoomsComponent } from './components/rooms/rooms.component';
+import { UsersComponent } from './components/users/users.component';
 
 export const routes: Routes = [
 

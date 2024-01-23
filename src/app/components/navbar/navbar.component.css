@@ -13,18 +13,22 @@
 .example-container {
   width: 100%;
   height: 100%;
-  background-color: transparent; 
+  background-color: rgb(126, 126, 126); 
   position: fixed;
-
+  
 }
 
 
 .example-sidenav {
-  border: 0.5px solid rgba(0, 0, 0, 0.5);
+  border-right: 0.5px solid rgb(139, 139, 139);
   border-top: 0;
 
 }
 
 .content-area{
-  padding: 100px;
+  padding: 30px;
+}
+
+.mat-toolbar {
+  box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.7); /* Add box-shadow for the navbar */
 }
