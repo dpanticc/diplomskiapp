@@ -5,10 +5,10 @@ import { Observable } from 'rxjs';
 
 export interface PeriodicElement {
   username: string;
-  position: number;
-  email: number;
+  email: string;
   firstName: string;
   lastName: string;
+  enabled: boolean;
 }
 
 @Injectable({
