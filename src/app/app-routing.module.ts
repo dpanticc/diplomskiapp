@@ -24,8 +24,8 @@ export const routes: Routes = [
       { path: 'rooms', component: RoomsComponent },
       { path: 'reservations', component: ReservationsComponent },
     ],
+    canActivate:[RoleGuard]
   },
-
 ];
 
 @NgModule({

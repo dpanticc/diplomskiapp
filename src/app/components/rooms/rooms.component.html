@@ -13,40 +13,36 @@
           <button mat-raised-button color="primary" id="addRoomButton" (click)="openAddDialog()">Add room</button>
 
           <mat-form-field>
-            <input matInput placeholder="Search..." [formControl]="searchFormControl">
+            <input matInput placeholder="Search..." [formControl]="searchFormControl" (input)="filterRooms()">
           </mat-form-field>
         </mat-card-header>
           <div class="roomCard">
             <!-- Room Cards -->
-            <mat-card class="example-card" *ngFor="let room of rooms">
+            <mat-card class="example-card" *ngFor="let room of filteredRooms">
                 <mat-card-header class="mat-card-title-group">
                     <div class="title-container">
+
                       <mat-card-title id="naslovKartice">{{ room.name }}</mat-card-title>
                     </div>
                     <div class="subtitle-container">
                       <mat-card-subtitle id="spratKartice"><p>Floor: {{ room.floor }}</p></mat-card-subtitle>
                     </div>
                   </mat-card-header>
-              
               <mat-card-content>
                 <p><strong>Capacity:</strong> {{ room.capacity }}</p>
                 <p><strong>Details:</strong> {{ room.details }}</p>
                 <div class="buttons">
                   <!-- Edit and Delete Buttons -->
-                  <button mat-icon-button color="accent" aria-label="Example icon button with a edit icon" (click)="edit()"class="editButton">
+                  <button mat-icon-button color="accent" aria-label="Edit" (click)="openEditDialog(room)"class="editButton">
                     <mat-icon class="editIcon">edit</mat-icon>
                   </button>
-                  <button mat-icon-button color="warn" aria-label="Example icon button with a delete icon" (click)="delete()"class="deleteButton">
+                  <button mat-icon-button color="warn" aria-label="Delete" (click)="delete(room)" class="deleteButton">
+
                     <mat-icon class="deleteIcon">delete</mat-icon>
                   </button>
                 </div>
               </mat-card-content>
-            </mat-card>
-
-            
-            
-              
-        
+            </mat-card> 
         </div>
       </mat-card-content>
       

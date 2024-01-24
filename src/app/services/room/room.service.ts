@@ -6,6 +6,10 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class RoomService {
+  updateRoom(id: number, formData: Room): Observable<Room> {
+    const url = `${this.apiUrl}/${id}`;
+    return this.http.put<Room>(url, formData);
+  }
 
   
   private apiUrl = 'http://localhost:8080/api/admin/rooms';
@@ -20,13 +24,13 @@ export class RoomService {
     return this.http.post<Room>(this.apiUrl, newRoom);
   }
 
-  deleteRoom(id: number) {
-    return this.http.delete<Room>(this.apiUrl);
+  deleteRoom(roomId: number) {
+    return this.http.delete<void>(`${this.apiUrl}?room=${roomId}`);
   }
 }
 
 export interface Room {
-  id: number;
+  roomId: number;
   name: string;
   floor: string;
   capacity: number;

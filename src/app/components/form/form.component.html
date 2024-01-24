@@ -1,5 +1,5 @@
 <div class="custom-dialog">
-    <h1 class="mat-dialog-title">Adding room form</h1>
+  <h1 class="mat-dialog-title">{{ data.room ? 'Edit Room' : 'Add Room' }}</h1>
     <div mat-dialog-content [formGroup]="form">
       <mat-form-field class="example-full-width">
         <mat-label>Name</mat-label>
@@ -19,7 +19,7 @@
       </mat-form-field>
     </div>
     <div mat-dialog-actions>
-      <button mat-button cdkFocusInitial (click)="addRoom()">Add</button>
+      <button mat-raised-button color="primary" (click)="submitForm()">{{ data.room ? 'Update' : 'Add' }}</button>
       <button mat-button (click)="onNoClick()">Cancel</button>
     </div>
   </div>

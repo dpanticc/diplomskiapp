@@ -11,7 +11,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormControl, FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
-import { MatIconModule } from '@angular/material/icon';
+import { MatIcon, MatIconModule } from '@angular/material/icon';
 import {
   MatDialog
 } from '@angular/material/dialog';
@@ -21,7 +21,7 @@ import { DialogComponent } from '../dialog/dialog.component';
 @Component({
   selector: 'app-rooms',
   standalone: true,
-  imports: [NavbarComponent, MatSidenavModule, SidebarComponent, FormComponent, MatCardModule, MatButton, CommonModule, MatFormFieldModule, FormsModule, MatInputModule, ReactiveFormsModule, MatIconModule],
+  imports: [NavbarComponent, MatSidenavModule, SidebarComponent, FormComponent, MatCardModule, MatButton, CommonModule, MatIconModule, MatFormFieldModule, FormsModule, MatInputModule, ReactiveFormsModule, MatIconModule],
   templateUrl: './rooms.component.html',
   styleUrl: './rooms.component.css',
 })
@@ -39,7 +39,19 @@ export class RoomsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.fetchRooms();
+    this.roomService.getRooms().subscribe(
+      (rooms) => {
+        this.rooms = rooms;
+        this.filteredRooms = rooms; // Initialize filteredRooms with all rooms
+      },
+      (error) => {
+        console.error('Error fetching rooms:', error);
+      }
+    );
+  
+    this.searchFormControl.valueChanges.subscribe(() => {
+      this.filterRooms();
+    });
   }
 
 
@@ -47,6 +59,7 @@ export class RoomsComponent implements OnInit {
     this.roomService.getRooms().subscribe(
       (rooms) => {
         this.rooms = rooms;
+        this.filteredRooms = rooms;
       },
       (error) => {
         console.error('Error fetching rooms:', error);
@@ -58,31 +71,24 @@ export class RoomsComponent implements OnInit {
     const searchTerm = this.searchFormControl.value.toLowerCase();
     this.filteredRooms = this.rooms.filter((room) =>
       room.name.toLowerCase().includes(searchTerm) ||
-      room.floor.toLowerCase().includes(searchTerm) ||
-      room.capacity.toString().toLowerCase().includes(searchTerm) ||
       room.details.toLowerCase().includes(searchTerm)
     );
   }
-
-  edit(){
-    console.log("Edit clicked");
-  }
-
-  delete(){
+  
+  delete(room:Room): void {
     const dialogRef = this.dialog.open(DialogComponent, {
       data: {
-        message: `Are you sure you want to delete this room?`,
+        message: `Are you sure you want to delete "${room.name}" room?`,
       },
     });
-
+  
     dialogRef.afterClosed().subscribe((result: boolean) => {
       if (result) {
-        
-        this.roomService.deleteRoom(50).subscribe(
+        this.roomService.deleteRoom(room.roomId).subscribe(
           () => {
             console.log('Room deleted successfully.');
+            this.notificationService.getMessage(`Room "${room.name}" deleted successfully!`);
             this.fetchRooms();
-            this.notificationService.getMessage("Room deleted successfully.");
           },
           (error: any) => {
             console.error('Error deleting room:', error);
@@ -91,10 +97,24 @@ export class RoomsComponent implements OnInit {
       }
     });
   }
+  
 
-  openAddDialog(){
+  openAddDialog(): void {
     const dialogRef = this.dialog.open(FormComponent, {
       disableClose: true,
+      data: {room : null}
+    });
+  
+    dialogRef.afterClosed().subscribe((result) => {
+      this.fetchRooms();
+    });
+  }
+
+  openEditDialog(room: Room):void{
+
+    const dialogRef = this.dialog.open(FormComponent, {
+      disableClose: true,
+      data:{room: room}
     });
 
     dialogRef.afterClosed().subscribe(result => {
