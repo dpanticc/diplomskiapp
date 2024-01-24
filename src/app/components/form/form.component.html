@@ -1,0 +1,26 @@
+<div class="custom-dialog">
+    <h1 class="mat-dialog-title">Adding room form</h1>
+    <div mat-dialog-content [formGroup]="form">
+      <mat-form-field class="example-full-width">
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="name">
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <mat-label>Floor</mat-label>
+        <input matInput formControlName="floor">
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <mat-label>Capacity</mat-label>
+        <input matInput formControlName="capacity">
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <mat-label>Details</mat-label>
+        <input matInput formControlName="details">
+      </mat-form-field>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-button cdkFocusInitial (click)="addRoom()">Add</button>
+      <button mat-button (click)="onNoClick()">Cancel</button>
+    </div>
+  </div>
+  

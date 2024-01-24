@@ -6,6 +6,8 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class RoomService {
+
+  
   private apiUrl = 'http://localhost:8080/api/admin/rooms';
 
   constructor(private http: HttpClient) {}
@@ -14,6 +16,13 @@ export class RoomService {
     return this.http.get<Room[]>(`${this.apiUrl}`);
   }
 
+  addRoom(newRoom: Room): Observable<Room> {
+    return this.http.post<Room>(this.apiUrl, newRoom);
+  }
+
+  deleteRoom(id: number) {
+    return this.http.delete<Room>(this.apiUrl);
+  }
 }
 
 export interface Room {

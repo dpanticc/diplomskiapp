@@ -1,12 +1,17 @@
+
 <div class="container">
     <!-- Background Card -->
+    
     <mat-card class="background-card">
+        
       <mat-card-content>
         <mat-card-header>
 
         <mat-card-title class="headerCard">Manage Rooms</mat-card-title>
         <span class="spacer"></span>
           <!-- Search Field -->
+          <button mat-raised-button color="primary" id="addRoomButton" (click)="openAddDialog()">Add room</button>
+
           <mat-form-field>
             <input matInput placeholder="Search..." [formControl]="searchFormControl">
           </mat-form-field>
@@ -14,25 +19,38 @@
           <div class="roomCard">
             <!-- Room Cards -->
             <mat-card class="example-card" *ngFor="let room of rooms">
-              <mat-card-header>
-                <mat-card-title-group class="mat-card-title-group">
-                  <mat-card-title>{{ room.name }}</mat-card-title>
-                  <mat-card-subtitle><p>Floor: {{ room.floor }}</p></mat-card-subtitle>
-                </mat-card-title-group>
-              </mat-card-header>
+                <mat-card-header class="mat-card-title-group">
+                    <div class="title-container">
+                      <mat-card-title id="naslovKartice">{{ room.name }}</mat-card-title>
+                    </div>
+                    <div class="subtitle-container">
+                      <mat-card-subtitle id="spratKartice"><p>Floor: {{ room.floor }}</p></mat-card-subtitle>
+                    </div>
+                  </mat-card-header>
+              
               <mat-card-content>
                 <p><strong>Capacity:</strong> {{ room.capacity }}</p>
                 <p><strong>Details:</strong> {{ room.details }}</p>
                 <div class="buttons">
                   <!-- Edit and Delete Buttons -->
-                  <button mat-button color="primary">Edit</button>
-                  <button mat-button color="warn">Delete</button>
+                  <button mat-icon-button color="accent" aria-label="Example icon button with a edit icon" (click)="edit()"class="editButton">
+                    <mat-icon class="editIcon">edit</mat-icon>
+                  </button>
+                  <button mat-icon-button color="warn" aria-label="Example icon button with a delete icon" (click)="delete()"class="deleteButton">
+                    <mat-icon class="deleteIcon">delete</mat-icon>
+                  </button>
                 </div>
               </mat-card-content>
             </mat-card>
+
+            
+            
+              
         
         </div>
       </mat-card-content>
+      
     </mat-card>
+    
     
 </div>

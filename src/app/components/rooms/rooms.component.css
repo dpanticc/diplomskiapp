@@ -1,69 +1,131 @@
+/*rooms css*/
 .example-card {
     width: 20%;
     margin-bottom: 8px;
     display: flex;
     flex-direction: column;
+    background-color:#4b4b4b;
+    box-shadow: 0px 10px 40px rgba(0.5, 0.5, 0.5, 0.5); /* Top shadow */
   }
-.headerCard{
-    display: inline-flex;
-    flex-direction: row;
-    align-items: start;
-    justify-content: space-between;
-}
 
 .spacer{
     flex: 1 1 auto;
 }
-.background-card {
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: -1; /* Ensure the background card is behind other elements */
+
+.mat-mdc-card-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0;
+    border-bottom: 0.5px solid rgb(139, 139, 139);
 }
+
 .roomCard{
   display: flex;
-  flex-direction: row;
-  align-items: flex-start;
+  flex-wrap: wrap; /* Allow cards to wrap to the next row */
   justify-content: space-around;
+  gap: 50px;
+  align-items: flex-start;
+  padding: 0;
+  padding-top: 20px;
 }
   
-  .mat-card-title-group {
-    display: flex;
-    flex-direction: row; /* Align the title and subtitle in a row */
-    justify-content: space-between; /* Spread elements horizontally */
-    width: 100%; /* Make sure the width is 100% */
-  }
+.mat-card-title-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
   
-  .mat-card-subtitle {
-    margin-left: auto; /* Push the subtitle to the right */
-  }
+.title-container mat-card-title {
+  text-align: center; /* Center the title */
+  margin-top: 30px;
+  font-size: 30px; /* Adjust the font size as needed */
+
+}
   
-  .mat-card-content {
+.subtitle-container {
+  align-self: flex-end; /* Align the subtitle to the right */
+  margin-right: 20px;
+}
+  
+  
+.mat-card-content {
     display: flex;
     flex-direction: column;
     align-items: flex-start; 
-  }
+}
   
-  .container {
+.container {
     flex-wrap: wrap;
     justify-content: space-around;
     align-items: stretch;
     gap: 8px;
     height: 100%; /* Make the container a positioning context for absolute positioning */
-  display: flex;
-  flex-direction: column;
-  }
+    display: flex;
+    flex-direction: column;
+}
   
-  .buttons {
+.buttons {
     display: flex;
     justify-content: flex-end;
     width: 100%; /* Make sure buttons take full width */
-  }
-  
-  button {
     margin-left: 8px; /* Add space between buttons */
-  }
+}
   
-  p{
+p{
     margin-top: 20px;
-  }
+}
+
+#addRoomButton{
+    margin-right: 34px;
+}
+
+.button-container {
+    display: flex;
+    gap: 16px; /* Adjust the gap between buttons */
+}
+
+/* Apply Material Design touch target styling for custom buttons */
+.editButton mat-icon,
+.deleteButton mat-icon {
+  min-width: 48px;
+  height: 48px;
+  padding: 0;
+  border: none;
+  border-radius: 50%; /* Circular shape */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  cursor: pointer;
+    
+}
+.deleteButton {
+    background-color: transparent;
+    border: 0;
+}
+
+.editIcon{
+    color: yellowgreen;
+}
+
+.deleteIcon{
+    color: #e53935;
+}
+
+.editButton{
+    background-color: transparent;
+    border: 0;
+}
+.deleteButton:hover mat-icon {
+    background-color: #e53935;
+    color: white;
+}
+  
+.editButton:hover mat-icon{
+   background-color: yellowgreen;
+   color: white;
+}
+  
+ 
+

@@ -1,0 +1,32 @@
+/* Styles for the custom dialog container */
+.custom-dialog {
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    padding: 20px;
+    max-width: 400px; /* Adjust the max-width as needed */
+  }
+  
+  /* Styles for the dialog title */
+  .mat-dialog-title {
+    text-align: center;
+    color: white;
+  }
+  
+  /* Adjust the spacing of form fields */
+  .mat-mdc-form-field {
+    margin-bottom: 0px;
+    width: 350px;
+  }
+  
+  /* Additional styling for the buttons in the dialog actions */
+  .mat-dialog-actions {
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  
+  /* Styling for the button */
+  button {
+    width: 20%; /* Adjust the button width as needed */
+  }
+  
