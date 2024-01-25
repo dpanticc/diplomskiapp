@@ -59,8 +59,8 @@ export class LoginComponent implements OnInit{
         lastName: ['', Validators.required],
         password: ['', [Validators.required, Validators.minLength(6)]],
       });
-    
   }
+  
   registerForm!: FormGroup;
   loginForm!: FormGroup;
   

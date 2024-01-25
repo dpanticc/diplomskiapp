@@ -25,7 +25,7 @@ export class RoomService {
   }
 
   deleteRoom(roomId: number) {
-    return this.http.delete<void>(`${this.apiUrl}?room=${roomId}`);
+    return this.http.delete<void>(`${this.apiUrl}/${roomId}`);
   }
 }
 

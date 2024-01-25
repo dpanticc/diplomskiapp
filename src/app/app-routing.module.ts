@@ -10,12 +10,18 @@ import { UserGuard } from './guards//user.guard';
 import { ReservationsComponent } from './components/reservations/reservations.component';
 import { RoomsComponent } from './components/rooms/rooms.component';
 import { UsersComponent } from './components/users/users.component';
+import { AccountComponent } from './components/account/account.component';
 
 export const routes: Routes = [
 
 
   {path: '', component: LoginComponent, canActivate:[HomeGuard]},
-  {path: 'home', component: HomeComponent, canActivate:[AuthGuard, UserGuard]},
+  {path: 'home', component: HomeComponent,  
+    children: [
+      { path: 'account', component: AccountComponent },
+      { path: 'reservations', component: ReservationsComponent },
+    ],
+    canActivate:[AuthGuard, UserGuard]},
   {
     path: 'admin-home',
     component: AdminComponent,

@@ -49,10 +49,14 @@ export class NavbarComponent {
             this.router.navigate(['/']);
           },
           (error) => {
+            localStorage.clear();
+            this.router.navigate(['/']);
             console.log(error);
           }
         );
       }
+      
+
     });
   }
  
