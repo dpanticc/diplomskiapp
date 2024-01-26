@@ -9,6 +9,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
+import { CommonModule } from '@angular/common';
 
 
 @Component({
@@ -16,7 +18,7 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.css'],
-  imports:[MatTableModule, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule, FormsModule]
+  imports:[MatTableModule, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule, FormsModule, MatIconModule, CommonModule]
 })
 export class UsersComponent implements OnInit {
   dataSource: PeriodicElement[] = [];

@@ -9,6 +9,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { RouterModule } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { Observable, of } from 'rxjs';
+import { NotificationService } from 'src/app/services/notification/notification.service';
 import { PeriodicElement, UserService } from 'src/app/services/user/user.service';
 
 @Component({
@@ -24,63 +26,149 @@ import { PeriodicElement, UserService } from 'src/app/services/user/user.service
 export class AccountComponent implements OnInit {
   hidePassword: boolean = true;
   accountForm!: FormGroup;
+  originalFormValues: any;
+  isFormDirty: boolean = false;
 
-  constructor(private formBuilder: FormBuilder, public userService: UserService, private jwtHelper: JwtHelperService) {
+  constructor(private formBuilder: FormBuilder, public userService: UserService, private jwtHelper: JwtHelperService, private notificationService: NotificationService,
+    ) {
 
     this.accountForm = this.formBuilder.group({
         username: ['', [Validators.required, Validators.minLength(3)]],
         email: ['', [Validators.required, Validators.email]],
         firstName: ['', Validators.required],
         lastName: ['', Validators.required],
-        password: ['', [Validators.required, Validators.minLength(6)]],
       });
-    
   }
 
   ngOnInit(): void {
-    const username = this.getUserData();
-
-    // Assuming getUserByUsername is a method in your UserService
-    this.userService.getUserByUsername(username).subscribe((user:PeriodicElement) => {
-      this.accountForm = this.formBuilder.group({
-        username: [user.username, [Validators.required, Validators.minLength(3)]],
-        email: [user.email, [Validators.required, Validators.email]],
-        firstName: [user.firstName, Validators.required],
-        lastName: [user.lastName, Validators.required],
-        password: ['', [Validators.required, Validators.minLength(6)]],
-      });
-    });
+    this.getUserData().subscribe(username => {
+      this.userService.getUserByUsername(username).subscribe(
+        (user: PeriodicElement | null) => {
+        if (user) {
+          this.accountForm = this.formBuilder.group({
+            username: [user.username, [Validators.required, Validators.minLength(3)]],
+            email: [{ value: user.email, disabled: true }, [Validators.required, Validators.email]],
+            firstName: [user.firstName, Validators.required],
+            lastName: [user.lastName, Validators.required],
+          });
+  
+          // Initialize originalFormValues after getting user data
+          this.originalFormValues = { ...this.accountForm.value };
+        } else {
+          console.error(`User with username ${username} not found.`);
+          // Handle the case where the user is not found, e.g., redirect or show an error message
+        }
+      },
+      (error: any) => {
+        console.error('Error fetching user data', error);
+        // Handle the error, e.g., redirect or show an error message
+      }
+    );
+  });
   }
   
-  togglePasswordVisibility(){
-    this.hidePassword = !this.hidePassword;
-  };
 
-  getUserData(): string {
-    const token = localStorage.getItem('access_token');
-
-    if (token) {
-      const decodedToken = this.jwtHelper.decodeToken(token);
-      const username: string = decodedToken.sub;
+  getUserData(): Observable<string> {
+    const username = localStorage.getItem('username');
+  
+    if (username) {
       console.log(username);
-
-      return username;
+      return of(username);
     } else {
-      throw new Error('No access token available.');
+      throw new Error('No username available in local storage.');
     }
   }
-
-  saveUser(){
-    const userData = this.accountForm.value;
-    console.log(userData);
-    this.userService.saveUser(userData).subscribe(
-      (response: any)=>{
-        console.log('User saved successfully', response)
-      },
-      (error: any) =>{
-        console.error('Error saving user', error);
-      }
-    )
-  }
   
+  saveUser() {
+    this.getUserData().subscribe(username => {
+      this.userService.getUserByUsername(username).subscribe(
+        (user: PeriodicElement | null) => {
+          if (user) {
+            const userData = { ...this.accountForm.value, id: user.id };
+  
+            console.log(userData);
+  
+            this.userService.saveUser(userData).subscribe(
+              (response: any) => {
+                console.log('User saved successfully', response);
+  
+                // Update the username in localStorage with the updated value from the response
+                localStorage.setItem('username', response.username);
+  
+                // Set originalFormValues to the updated values
+                this.originalFormValues = { ...this.accountForm.value };
+                
+                this.notificationService.getMessage(`Successfully changed account information`);
+
+
+                // Reset the form to its original values
+                this.resetForm();
+  
+              },
+              (error: any) => {
+                console.error('Error saving user', error);
+              }
+            );
+          } else {
+            console.error(`User with username ${username} not found.`);
+          }
+        },
+        (error: any) => {
+          console.error('Error fetching user data', error);
+        }
+      );
+    });
+  }
+  resetForm() {
+    // Enable the 'email' control temporarily
+    const emailControl = this.accountForm.get('email');
+    emailControl?.enable();
+  
+    // Iterate through form controls and set values
+    Object.keys(this.originalFormValues).forEach(controlName => {
+      const control = this.accountForm.get(controlName);
+      if (control) {
+        control.setValue(this.originalFormValues[controlName]);
+      }
+    });
+  
+    // Disable the 'email' control again
+    emailControl?.disable();
+  
+    this.isFormDirty = false;
+  
+    this.accountForm.markAsPristine();
+  }
+
+    // Check if there are changes in the form
+    checkFormChanges() {
+      this.isFormDirty = !this.areObjectsEqual(this.originalFormValues, this.accountForm.value);
+    }
+  
+    // Helper function to compare two objects
+    areObjectsEqual(obj1: any, obj2: any) {
+      return JSON.stringify(obj1) === JSON.stringify(obj2);
+    }
+  
+    // Reset the form to its original values
+    cancelChanges() {
+      // Enable the 'email' control temporarily
+      const emailControl = this.accountForm.get('email');
+      emailControl?.enable();
+    
+      // Iterate through form controls and set values
+      Object.keys(this.originalFormValues).forEach(controlName => {
+        const control = this.accountForm.get(controlName);
+        if (control) {
+          control.setValue(this.originalFormValues[controlName]);
+        }
+      });
+    
+      // Disable the 'email' control again
+      emailControl?.disable();
+    
+      this.isFormDirty = false;
+    
+      this.accountForm.markAsPristine();
+    }
 }

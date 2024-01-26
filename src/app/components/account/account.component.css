@@ -4,6 +4,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    
   }
   
   /* Styles for the form */
@@ -13,7 +14,7 @@
     padding: 20px;
     background-color: #424242;
     box-shadow: 0px 10px 40px rgba(0.5, 0.5, 0.5, 0.5); /* Top shadow */
-
+    border: 1px solid  rgb(139, 139, 139);
     border-radius: 8px;
     align-items: center;
     justify-content: center;
@@ -54,4 +55,16 @@
   .hover-click:hover {
     cursor: pointer;
   }
+
+  .buttons {
+    display: flex;
+    justify-content: flex-end;
+    width: 50%; /* Make sure buttons take full width */
+}
+
+.saveButton{
+    margin-right: 25px;
+}
+
+
   

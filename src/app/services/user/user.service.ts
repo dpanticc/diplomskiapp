@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 
 
 export interface PeriodicElement {
+  id: number;
   username: string;
   email: string;
   firstName: string;
@@ -40,7 +41,10 @@ export class UserService {
     return this.http.get<PeriodicElement>(getUserUrl);
   }
 
-  saveUser(userData: any) {
-    return this.http.put<any>(this.userUrl, userData);
+  saveUser(userData: PeriodicElement) {
+    const userId = userData.id;
+    const saveUserUrl = `${this.userUrl}`;
+    console.log(userData);
+    return this.http.put<any>(saveUserUrl, userData);
   }
 }

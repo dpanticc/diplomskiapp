@@ -1,6 +1,7 @@
 @if (switchForm) {
 <div class = "form-container">
   <form [formGroup]="loginForm" (ngSubmit)="onSubmitLogin()">
+    
     <div class = "form-items">
         <mat-form-field class="example-full-width" id = "username" hideRequiredMarker>
             <mat-label>Username</mat-label>
@@ -20,6 +21,7 @@
 } @else {
     <div class="form-container">
         <form [formGroup]="registerForm" (ngSubmit)="onSubmitRegister()">
+          <h1 class="mat-dialog-title">Registration form</h1>
           <div class="form-items">
             <mat-form-field class="example-full-width">
               <mat-label>Username</mat-label>
