@@ -9,8 +9,6 @@
 
             </mat-form-field>
             
-       
-            
             <mat-form-field class="example-full-width"hideRequiredMarker>
               <mat-label>First Name</mat-label>
               <input type="text" matInput formControlName="firstName" placeholder="Enter your first name" (ngModelChange)="checkFormChanges()">
@@ -26,13 +24,23 @@
                 <mat-label>Email</mat-label>
                 <input type="email" matInput formControlName="email" placeholder="Enter your email">
               </mat-form-field>
-            
+
+
+
+
             <div class="buttons">
+
+              
               <button class="saveButton"mat-raised-button color="primary" [disabled]="!isFormDirty" (click)="saveUser()">Save</button>
+
               <button class="cancelButton"mat-raised-button color="basic" [disabled]="!isFormDirty" (click)="cancelChanges()">Cancel</button>
             </div>
 
+            <div class="passwordChange">
+              <p (click)="openPasswordChangeStepper()">Do you want to change your password? <span class="highlight-link">Click here</span>.</p>
+            </div>
           </div>
         </form>
+
 
   

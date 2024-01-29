@@ -53,10 +53,13 @@
             <button mat-button color="warn" (click)="onDelete(element)">Delete</button>
             </td>
         </ng-container>
-
         <!-- Attach Header Row and Data Row -->
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
         </table>
+        <div class="button-container">
+          <button mat-raised-button color="primary" id="editAdminAcc" (click)="openEditDialog()">Edit admin account</button>
+        </div>
+       
     </mat-card-content>
 </mat-card>

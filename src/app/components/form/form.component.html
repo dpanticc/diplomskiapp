@@ -19,8 +19,8 @@
       </mat-form-field>
     </div>
     <div mat-dialog-actions>
-      <button mat-raised-button color="primary" (click)="submitForm()">{{ data.room ? 'Update' : 'Add' }}</button>
-      <button mat-button (click)="onNoClick()">Cancel</button>
+      <button mat-raised-button color="primary" (click)="submitForm()" class="">{{ data.room ? 'Update' : 'Add' }}</button>
+      <button mat-button (click)="onNoClick()" id="cancel">Cancel</button>
     </div>
   </div>
   

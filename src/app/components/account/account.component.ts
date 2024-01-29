@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -12,11 +12,15 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { Observable, of } from 'rxjs';
 import { NotificationService } from 'src/app/services/notification/notification.service';
 import { PeriodicElement, UserService } from 'src/app/services/user/user.service';
+import {MatStepper, MatStepperModule} from '@angular/material/stepper';
+import { StepperComponent } from '../stepper/stepper.component';
+import { MatDialog } from '@angular/material/dialog';
+
 
 @Component({
   selector: 'app-account',
   standalone: true,
-  imports: [FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatIconModule, MatButtonModule, HttpClientModule, RouterModule, CommonModule, MatCardModule ],
+  imports: [FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatIconModule, MatButtonModule, HttpClientModule, RouterModule, CommonModule, MatCardModule, MatStepperModule],
   templateUrl: './account.component.html',
   styleUrl: './account.component.css',
   providers:[JwtHelperService]
@@ -28,9 +32,15 @@ export class AccountComponent implements OnInit {
   accountForm!: FormGroup;
   originalFormValues: any;
   isFormDirty: boolean = false;
+  private alwaysEnableCancelButton: boolean = false;
+  private passwordChangeStepperOpened: boolean = false;
 
+
+  @ViewChild('stepper') private stepper!: MatStepper;
+
+  
   constructor(private formBuilder: FormBuilder, public userService: UserService, private jwtHelper: JwtHelperService, private notificationService: NotificationService,
-    ) {
+    private dialog: MatDialog) {
 
     this.accountForm = this.formBuilder.group({
         username: ['', [Validators.required, Validators.minLength(3)]],
@@ -170,5 +180,11 @@ export class AccountComponent implements OnInit {
       this.isFormDirty = false;
     
       this.accountForm.markAsPristine();
+    }
+    
+    openPasswordChangeStepper() {
+      this.dialog.open(StepperComponent, {
+        width: '500px', // Adjust the width as needed
+      });
     }
 }

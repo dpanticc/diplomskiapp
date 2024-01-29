@@ -11,6 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
+import { AccountComponent } from '../account/account.component';
 
 
 @Component({
@@ -76,6 +77,20 @@ export class UsersComponent implements OnInit {
           }
         );
       }
+    });
+  }
+
+  openEditDialog() {
+    
+    const dialogRef = this.dialog.open(AccountComponent, {
+     
+    width: "742px",
+      data: {/* pass any data if needed */}
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed', result);
+      this.fetchUsers();
     });
   }
 }

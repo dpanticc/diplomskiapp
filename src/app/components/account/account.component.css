@@ -42,12 +42,9 @@
     align-self: center;
   }
   
-  p {
-    margin-top: 25px;
-    align-self: center;
+  h1{
     color: white;
   }
-  
   a {
     color: #7b1fa2;
   }
@@ -66,5 +63,27 @@
     margin-right: 25px;
 }
 
+.changePass{
+  margin-right: 25px;
+}
 
+
+.highlight-link {
+  color:  yellowgreen;  /* Change the color as per your preference */
   
+  text-decoration: underline;  /* Optional: Add underline to the text */
+  cursor: pointer;
+  width: 500px;
+
+}
+
+p{
+    margin-top: 14px;
+}
+
+.passwordChange {
+  align-self: flex-end; /* Align to the right */
+  margin-top: 20px; /* Add some space between the text and the form */
+  margin-right: 70px;
+  color: white;
+}

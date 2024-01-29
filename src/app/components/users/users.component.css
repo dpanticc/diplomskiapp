@@ -64,3 +64,16 @@
   justify-content: space-between;
   align-items: baseline;
 }
+
+#editAdminAcc{
+  margin-top: 20px;
+  margin-left: auto;
+}
+
+
+.button-container{
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
