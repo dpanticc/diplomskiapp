@@ -15,11 +15,9 @@ export interface PeriodicElement {
 @Injectable({
   providedIn: 'root',
 })
+
 export class UserService {
- 
- 
   
- 
   private adminUrl = 'http://localhost:8080/api/admin/users';
   private userUrl =  'http://localhost:8080/api/user'
   jwtHelper: any;
@@ -47,4 +45,6 @@ export class UserService {
     console.log(userData);
     return this.http.put<any>(saveUserUrl, userData);
   }
+
+ 
 }

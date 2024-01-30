@@ -5,48 +5,56 @@
         <ng-template matStepLabel>Enter your current password</ng-template>
         <mat-form-field>
           <mat-label>Current password</mat-label>
-          <input matInput formControlName="firstCtrl" required>
+          <input matInput [type]="hidePassword? 'password' : 'text'" formControlName="firstCtrl" required>
+          <mat-icon class="hover-click" matSuffix (click)="togglePasswordVisibility()">{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+
         </mat-form-field>
         <div>
-          <button mat-button matStepperNext class="nextButton">Next</button>
+            <button mat-raised-button color="primary" (click)="verifyCurrentPassword()" class="nextButton">Next</button>
         </div>
       </form>
     </mat-step>
-    <mat-step [stepControl]="secondFormGroup">
+    <mat-step [stepControl]="secondFormGroup" >
       <form [formGroup]="secondFormGroup">
         <ng-template matStepLabel>Type your new password</ng-template>
         <mat-form-field>
           <mat-label>New password</mat-label>
-          <input matInput formControlName="secondCtrl" 
-                 required>
+          <input matInput matInput [type]="hidePassword? 'password' : 'text'" formControlName="secondCtrl" required>
+          <mat-icon class="hover-click" matSuffix (click)="togglePasswordVisibility()">{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+
         </mat-form-field>
         <div>
-            <button mat-button matStepperNext class="nextButton">Next</button>
-          <button mat-button matStepperPrevious>Back</button>
+            <button mat-raised-button color="primary" matStepperNext class="nextButton">Next</button>       
+            <button mat-button matStepperPrevious>Back</button>
         </div>
       </form>
     </mat-step>
     <mat-step [stepControl]="thirdFormGroup">
         <form [formGroup]="thirdFormGroup">
-          <ng-template matStepLabel>Re-type new password</ng-template>
+          <ng-template matStepLabel>Confirm new password</ng-template>
           <mat-form-field>
-            <mat-label>Re-type password</mat-label>
-            <input matInput formControlName="thirdCtrl" 
-                   required>
+            <mat-label>Retype new password</mat-label>
+            <input matInput [type]="hidePassword? 'password' : 'text'" formControlName="thirdCtrl" required>        
+            <mat-icon class="hover-click" matSuffix (click)="togglePasswordVisibility()">{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+
           </mat-form-field>
           <div>
-            <button mat-button matStepperNext class="nextButton">Next</button>
+            <button mat-raised-button color="primary" matStepperNext class="nextButton" (click)="updatePassword()">Next</button>
             <button mat-button matStepperPrevious>Back</button>
           </div>
         </form>
       </mat-step>
-    <mat-step>
+    <mat-step [stepControl]="doneFormGroup">
+        <form [formGroup]="doneFormGroup">
+
       <ng-template matStepLabel>Done</ng-template>
-      <p>You are now done.</p>
+      <p>You have successfully changed your password.</p>
       <div>
-        <button mat-button>Ok</button>
+        <button mat-button (click)="close()">Ok</button>
         <button mat-button (click)="stepper.reset()">Reset</button>
       </div>
+    </form>
+
     </mat-step>
   </mat-stepper>
   
