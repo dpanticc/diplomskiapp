@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Injectable } from '@angular/core';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { SidebarComponent } from '../sidebar/sidebar.component';
@@ -12,13 +12,70 @@ import {
   CalendarEventTimesChangedEvent,
   CalendarModule,
   CalendarView,
+  DateAdapter,
+  CalendarDateFormatter,
+  DateFormatterParams,
+  CalendarUtils
 } from 'angular-calendar';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MatNativeDateModule} from '@angular/material/core';
+import { MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatNativeDateModule} from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { provideNativeDateAdapter } from '@angular/material/core';
+import { NativeDateAdapter } from '@angular/material/core';
+
+@Injectable()
+class CustomDateFormatter extends CalendarDateFormatter {
+  override monthViewColumnHeader({ date, locale }: DateFormatterParams): string {
+    return super.monthViewColumnHeader({ date, locale });
+  }
+}
+
+@Injectable()
+class CustomDateAdapter extends NativeDateAdapter {
+  startOfWeek(): number {
+    return 1; // Adjust the value based on your locale (0 for Sunday, 1 for Monday, etc.)
+  }
+
+  addDays(date: Date, days: number): Date {
+    // Ensure that 'date' is a valid Date object
+    if (!(date instanceof Date)) {
+      throw new Error('Invalid date parameter in addDays method.');
+    }
+  
+    // Check if the date object is invalid or NaN
+    if (isNaN(date.getTime())) {
+      throw new Error('Invalid date object in addDays method.');
+    }
+  
+    const newDate = new Date(date);
+    newDate.setDate(date.getDate() + days);
+    return newDate;
+  }
+  
+  override getFirstDayOfWeek(): number {
+    // Adjust the value based on your locale (0 for Sunday, 1 for Monday, etc.)
+    return 0;
+  }
+
+
+  override format(date: Date, displayFormat: Object): string {
+    // Implement your custom date formatting logic here
+    // You can utilize the displayFormat parameter to customize the output
+    // Return the formatted date as a string
+    return super.format(date, displayFormat);
+  }
+
+  override parse(value: any): Date | null {
+    // Implement your custom date parsing logic here
+    // Parse the value into a Date object or return null if parsing fails
+    return super.parse(value);
+  }
+
+  
+}
+
 
 const colors: any = {
   red: {
@@ -64,7 +121,26 @@ export const MY_DATE_FORMATS = {
   templateUrl: './reservations.component.html',
   styleUrls: ['./reservations.component.css'],
   providers: [
-    provideNativeDateAdapter(), // Native date adapter provider
+    provideNativeDateAdapter(),
+    {
+      provide: DateAdapter,
+      useClass: NativeDateAdapter,
+      deps: [MAT_DATE_FORMATS],
+    },
+    { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS },
+    {
+      provide: CalendarDateFormatter,
+      useClass: CustomDateFormatter,
+    },
+    {
+      provide: CalendarUtils,
+      useClass: CalendarUtils, // Add this provider
+    },
+    {
+      provide: DateAdapter,
+      useClass: CustomDateAdapter,
+      deps: [MAT_DATE_LOCALE, MAT_DATE_FORMATS],
+    },
   ],
 })
 export class ReservationsComponent {
@@ -142,6 +218,7 @@ export class ReservationsComponent {
     },
   ];
 
+  
   activeDayIsOpen: boolean = true;
 
   constructor(private modal: NgbModal) {

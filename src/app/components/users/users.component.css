@@ -5,10 +5,13 @@
   border-collapse: separate;
   border-spacing: 0;
   box-shadow: 0px 10px 40px rgba(0.5, 0.5, 0.5, 0.5); /* Top shadow */
-  border: 1px solid  rgb(139, 139, 139);
-
+  
 }
 
+.usersCard {
+  
+  border: 1px solid rgb(139, 139, 139);
+}
 .checkIcon{
   color: yellowgreen;
 }
@@ -17,17 +20,13 @@
   color: #c62828;
 }
 
-.mat-mdc-row{
-  border-bottom: 1px solid #555252; /* Adjust the color as needed */
-}
 
 .mat-mdc-cell {
   border-right: 1px solid #555252; /* Adjust the color as needed */
+  max-height: 620px; /* Adjust the max height as needed */
+  overflow: auto;
 }
 
-.mat-mdc-cell:last-child {
-  border-right: none; /* Remove right border for the last cell in each row */
-}
 
 .mat-mdc-row:hover {
   background-color: rgba(124, 123, 124, 0.5); /* Adjust the background color for hover effect */
@@ -51,7 +50,7 @@
   display: flex;
   flex-direction: column;
   border: 1px solid  rgb(139, 139, 139);
-
+ 
 }
 
 .search-container {
@@ -76,4 +75,3 @@
     justify-content: space-between;
     align-items: baseline;
 }
-

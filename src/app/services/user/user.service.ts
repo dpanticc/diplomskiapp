@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { MatPaginator } from '@angular/material/paginator';
 
 
 export interface PeriodicElement {
@@ -10,6 +11,7 @@ export interface PeriodicElement {
   firstName: string;
   lastName: string;
   enabled: boolean;
+  paginator?: MatPaginator;
 }
 
 @Injectable({
