@@ -38,13 +38,13 @@ export class StepperComponent {
   doneFormGroup = this._formBuilder.group({
   });
 
-  isValidPassword = false; // Set to false initially
+  isValidPassword = false; 
 
 
   hidePassword: boolean = true;
 
 
-  @ViewChild('stepper') stepper!: MatStepper; // Add the non-null assertion operator here
+  @ViewChild('stepper') stepper!: MatStepper; 
 
 
   constructor(private _formBuilder: FormBuilder, private loginService: LoginService, private notificationService: NotificationService, public dialogRef: MatDialogRef<StepperComponent>) {}

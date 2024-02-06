@@ -1,73 +1,64 @@
-<mat-stepper labelPosition="bottom" #stepper>
-  <mat-step [stepControl]="firstFormGroup">
-    <form [formGroup]="firstFormGroup">
-      <ng-template matStepLabel>Enter purpuse for your reservation</ng-template>
-        <form class="example-form">
-          <mat-form-field class="example-full-width">
-            <mat-label>Reservation purpuse</mat-label>
-            <input #input
-                   type="text"
-                   placeholder="Pick one"
-                   matInput
-                   [formControl]="myControl"
-                   [matAutocomplete]="auto"
-                   (input)="filter()"
-                   (focus)="filter()">
-            <mat-autocomplete requireSelection #auto="matAutocomplete">
-              @for (option of filteredOptions; track option) {
-                <mat-option [value]="option">{{option}}</mat-option>
-              }
-            </mat-autocomplete>
-          </mat-form-field>
-          
-        </form>
-      <div>
-        <button mat-button matStepperNext>Next</button>
+  <mat-stepper labelPosition="bottom" linear="true" #stepper class="stepper" orientation="vertical">
+    <mat-step [stepControl]="firstFormGroup">
+      <div class="step-container">
+
+    <form [formGroup]="firstFormGroup" class="formGroups">
+      <ng-template matStepLabel>Enter purpose for your reservation: {{ chosenPurpose }}</ng-template>
+      <mat-form-field class="example-full-width">
+        <mat-label>Reservation purpose</mat-label>
+        <mat-select formControlName="purpose" placeholder="Pick one" (selectionChange)="onPurposeChange($event.value); onThirdStepEntered()">
+          <mat-option class="options" *ngFor="let purpose of reservationPurposes" [value]="purpose">
+            {{ purpose }}
+          </mat-option>
+        </mat-select>
         
+      </mat-form-field>
+      <div class="buttons">
+        <button mat-button matStepperNext class="nextButton" [disabled]="!firstFormGroup.valid">Next</button>
       </div>
     </form>
+    </div>
   </mat-step>
-  <mat-step [stepControl]="secondFormGroup">
-    <form [formGroup]="secondFormGroup">
-      <ng-template matStepLabel>Select date for your reservation</ng-template>
-        <form class="example-form">
-            <mat-form-field class="example-full-width">
-              <mat-label>Choose a date</mat-label>
-              <input matInput [matDatepicker]="picker">
-              <mat-hint>MM/DD/YYYY</mat-hint>
-              <mat-datepicker #picker></mat-datepicker>
-          </mat-form-field>
-          <button mat-raised-button (click)="picker.open()">Open</button>
-        </form>
-      <div>
-        <button mat-button matStepperPrevious>Back</button>
-
-        <button mat-button matStepperNext>Next</button>
+  <mat-step [stepControl]="secondFormGroup" >
+    <form [formGroup]="secondFormGroup" class="formGroups">
+      <ng-template matStepLabel>Select date for your reservation: {{ chosenDate }}</ng-template>
+      <mat-form-field class="example-full-width">
+        <mat-label>Choose a present date</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="date" (dateChange)="onDateChange($event)">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+      <!-- Add a null check before accessing hasError method -->
+      <div class="buttons">
+        <button mat-button matStepperPrevious class="buttonBack">Back</button>
+        <button mat-button matStepperNext class="nextButton" [disabled]="!secondFormGroup.valid">Next</button>
       </div>
     </form>
   </mat-step>
   <mat-step [stepControl]="thirdFormGroup">
-    <form [formGroup]="thirdFormGroup">
-      <ng-template matStepLabel>Choose a room for your reservation</ng-template>
+    <form [formGroup]="thirdFormGroup" class="formGroups">
+      
+        <ng-template matStepLabel>Choose a room for your reservation</ng-template>
+
       <!-- Include your room table component here -->
-      <app-roomstable></app-roomstable>
-      <div>
-        <button mat-button matStepperPrevious>Back</button>
-        <button mat-button matStepperNext>Next</button>
+      <app-roomstable [rooms]="rooms"></app-roomstable>
+      <div class="buttons">
+        <button mat-button matStepperPrevious class="buttonBack">Back</button>
+        <button mat-button matStepperNext class="nextButton" [disabled]="!thirdFormGroup.valid">Next</button>
       </div>
     </form>
   </mat-step>
-  <mat-step [stepControl]="fourthFormGroup" optional>
-    <form [formGroup]="fourthFormGroup">
+  <mat-step [stepControl]="fourthFormGroup" >
+    <form [formGroup]="fourthFormGroup" class="formGroups">
       <ng-template matStepLabel>Pick a free time slot</ng-template>
       <mat-form-field>
         <mat-label>Address</mat-label>
-        <input matInput formControlName="secondCtrl" placeholder="Ex. 1 Main St, New York, NY"
+        <input matInput formControlName="fourthCtrl" placeholder="Ex. 1 Main St, New York, NY"
                required>
       </mat-form-field>
-      <div>
-        <button mat-button matStepperPrevious>Back</button>
-        <button mat-button matStepperNext>Next</button>
+      <div class="buttons">
+        <button mat-button matStepperPrevious class="buttonBack">Back</button>
+        <button mat-button matStepperNext class="nextButton">Next</button>
       </div>
     </form>
   </mat-step>
@@ -75,8 +66,9 @@
     <ng-template matStepLabel>Done</ng-template>
     <p>You are now done.</p>
     <div>
-      <button mat-button matStepperPrevious>Back</button>
-      <button mat-button (click)="stepper.reset()">Reset</button>
+      <button mat-button (click)="stepper.reset()">Ok</button>
     </div>
   </mat-step>
 </mat-stepper>
+
+

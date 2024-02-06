@@ -7,11 +7,6 @@
     
   }
 
-  .cdk-global-overlay-wrapper{
-    justify-content: center;
-    align-items: center;
-  }
-  
   /* Styles for the form */
   form {
     width: 100%;

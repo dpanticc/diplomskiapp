@@ -1,14 +1,17 @@
 import {Component, ElementRef, ViewChild} from '@angular/core';
-import {FormBuilder, Validators, FormsModule, ReactiveFormsModule, FormControl} from '@angular/forms';
+import {FormBuilder, Validators, FormsModule, ReactiveFormsModule, FormControl, ValidatorFn, AbstractControl, FormGroup} from '@angular/forms';
 import {MatButtonModule} from '@angular/material/button';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatStepperModule} from '@angular/material/stepper';
-import {AsyncPipe} from '@angular/common';
-import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import {MatStepper, MatStepperModule} from '@angular/material/stepper';
+import {AsyncPipe, CommonModule, DatePipe} from '@angular/common';
+import { DateValidator } from './date.validator';
 import { RoomstableComponent } from '../roomstable/roomstable.component';
-import {MatDatepickerModule} from '@angular/material/datepicker';
-import {provideNativeDateAdapter} from '@angular/material/core';
+import {MatDatepickerInputEvent, MatDatepickerModule} from '@angular/material/datepicker';
+import {DateAdapter, MAT_DATE_FORMATS, provideNativeDateAdapter} from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
+import { CustomDateAdapter, MY_DATE_FORMATS } from './custom.date.adapter';
+import { Room, RoomService } from 'src/app/services/room/room.service';
   
 
 @Component({
@@ -21,14 +24,17 @@ import {provideNativeDateAdapter} from '@angular/material/core';
     MatInputModule,
     MatButtonModule,
     AsyncPipe,
-    MatAutocompleteModule,
     RoomstableComponent,
-    MatDatepickerModule
+    MatDatepickerModule,
+    MatSelectModule,
+    CommonModule
 
   ],
   templateUrl: './reservations.component.html',
   styleUrls: ['./reservations.component.css'],
-  providers: [ provideNativeDateAdapter()],
+  providers: [ provideNativeDateAdapter(), DatePipe,
+    { provide: DateAdapter, useClass: CustomDateAdapter },
+    { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS }],
 })
 export class ReservationsComponent {
   @ViewChild('input', { static: true }) input!: ElementRef<HTMLInputElement>;
@@ -36,25 +42,54 @@ export class ReservationsComponent {
   reservationPurposes: string[] = ['Lecture', 'Exam', 'Public Meeting', 'Internal Meeting', 'Conference'];
   filteredOptions: string[] | undefined;
   
-  firstFormGroup = this._formBuilder.group({
-    firstCtrl: ['', Validators.required],
-  });
-  secondFormGroup = this._formBuilder.group({
-    secondCtrl: ['', Validators.required],
-  })
-  thirdFormGroup = this._formBuilder.group({
-    secondCtrl: ['', Validators.required],
-  });
-  fourthFormGroup = this._formBuilder.group({
-    secondCtrl: ['', Validators.required],
-  });
+  firstFormGroup: FormGroup ;
+  secondFormGroup: FormGroup ;
+  thirdFormGroup: FormGroup ;
+  fourthFormGroup: FormGroup ;
 
-  constructor(private _formBuilder: FormBuilder) {
+  chosenPurpose: string | undefined;
+  chosenDate: string | undefined;
+  
+  rooms: Room[] = [];
+
+
+  constructor(private _formBuilder: FormBuilder, private datePipe: DatePipe, private roomService: RoomService) {
     this.filteredOptions = this.reservationPurposes.slice();
+
+    this.firstFormGroup = this._formBuilder.group({
+      purpose: ['', Validators.required]
+    });
+
+    this.secondFormGroup = this._formBuilder.group({
+      date: ['', [Validators.required, DateValidator.futureDateValidator()]] // Apply the custom validator
+    });
+    this.thirdFormGroup = this._formBuilder.group({
+      thirdCtrl: ['', Validators.required]
+    });
+
+    this.fourthFormGroup = this._formBuilder.group({
+      fourthCtrl: ['', Validators.required]
+    });
+    
+  }
+  
+  onPurposeChange(purpose: string) {
+    this.chosenPurpose = purpose;
+  }
+  
+  onDateChange(event: MatDatepickerInputEvent<Date>) {
+    this.chosenDate = this.datePipe.transform(event.value, 'dd.MM.yyyy.')!;
   }
 
-  filter(): void {
-    const filterValue = this.input.nativeElement.value.toLowerCase();
-    this.filteredOptions = this.reservationPurposes.filter(o => o.toLowerCase().includes(filterValue));
+  onThirdStepEntered() {
+  if (this.chosenPurpose) {
+    this.roomService.getRoomsByPurpose(this.chosenPurpose).subscribe((rooms: Room[]) => {
+      console.log('Rooms555 received:', rooms); // Add this line to log the received rooms
+      this.rooms = rooms; 
+    });
   }
+}
+onHeaderClick(){
+  console.log("Click header")
+}
 }

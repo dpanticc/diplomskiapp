@@ -7,7 +7,6 @@
           <mat-label>Current password</mat-label>
           <input matInput [type]="hidePassword? 'password' : 'text'" formControlName="firstCtrl" required>
           <mat-icon class="hover-click" matSuffix (click)="togglePasswordVisibility()">{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
-
         </mat-form-field>
         <div>
             <button mat-raised-button color="primary" (click)="verifyCurrentPassword()" class="nextButton">Next</button>

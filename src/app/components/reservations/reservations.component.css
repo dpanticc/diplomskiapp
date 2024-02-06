@@ -1,3 +1,34 @@
 table {
   width: 100%;
 }
+
+.nextButton{
+  background-color: #7b1fa2;
+  margin-left: 20px;
+  width: 80px;
+}
+
+.buttons{
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.buttonBack{
+  width: 80px;
+}
+
+.stepper{
+  box-shadow: 0px 10px 40px rgba(0.5, 0.5, 0.5, 0.5); /* Top shadow */
+  border: 1px solid  rgb(139, 139, 139);
+
+}
+
+.formGroups{
+  margin-top: 20px;
+}
+
+.options{
+  margin-top: 3px;
+}
+
