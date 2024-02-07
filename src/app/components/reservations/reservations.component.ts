@@ -1,5 +1,5 @@
 import {Component, ElementRef, ViewChild} from '@angular/core';
-import {FormBuilder, Validators, FormsModule, ReactiveFormsModule, FormControl, ValidatorFn, AbstractControl, FormGroup} from '@angular/forms';
+import {FormBuilder, Validators, FormsModule, ReactiveFormsModule, FormControl, ValidatorFn, AbstractControl, FormGroup, ValidationErrors} from '@angular/forms';
 import {MatButtonModule} from '@angular/material/button';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
@@ -12,7 +12,10 @@ import {DateAdapter, MAT_DATE_FORMATS, provideNativeDateAdapter} from '@angular/
 import { MatSelectModule } from '@angular/material/select';
 import { CustomDateAdapter, MY_DATE_FORMATS } from './custom.date.adapter';
 import { Room, RoomService } from 'src/app/services/room/room.service';
-  
+import {MatChipsModule} from '@angular/material/chips';
+import { MatCardModule } from '@angular/material/card';
+import { RoomValidator } from './room.validator';
+ 
 
 @Component({
   selector: 'app-reservations',
@@ -27,7 +30,9 @@ import { Room, RoomService } from 'src/app/services/room/room.service';
     RoomstableComponent,
     MatDatepickerModule,
     MatSelectModule,
-    CommonModule
+    CommonModule,
+    MatChipsModule,
+    MatCardModule
 
   ],
   templateUrl: './reservations.component.html',
@@ -36,12 +41,14 @@ import { Room, RoomService } from 'src/app/services/room/room.service';
     { provide: DateAdapter, useClass: CustomDateAdapter },
     { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS }],
 })
+
 export class ReservationsComponent {
   @ViewChild('input', { static: true }) input!: ElementRef<HTMLInputElement>;
   myControl = new FormControl('');
   reservationPurposes: string[] = ['Lecture', 'Exam', 'Public Meeting', 'Internal Meeting', 'Conference'];
   filteredOptions: string[] | undefined;
-  
+  selectedDate: Date | null = null; // Define selectedDate property
+
   firstFormGroup: FormGroup ;
   secondFormGroup: FormGroup ;
   thirdFormGroup: FormGroup ;
@@ -49,8 +56,11 @@ export class ReservationsComponent {
 
   chosenPurpose: string | undefined;
   chosenDate: string | undefined;
-  
+  roomSelected: boolean = false;
+
   rooms: Room[] = [];
+  selectedRooms: Room[] = [];   
+
 
 
   constructor(private _formBuilder: FormBuilder, private datePipe: DatePipe, private roomService: RoomService) {
@@ -63,8 +73,9 @@ export class ReservationsComponent {
     this.secondFormGroup = this._formBuilder.group({
       date: ['', [Validators.required, DateValidator.futureDateValidator()]] // Apply the custom validator
     });
+
     this.thirdFormGroup = this._formBuilder.group({
-      thirdCtrl: ['', Validators.required]
+      rooms: [[], [Validators.required, RoomValidator.selectedRoomsValidator()]] // Apply the custom validator for selected rooms
     });
 
     this.fourthFormGroup = this._formBuilder.group({
@@ -72,9 +83,11 @@ export class ReservationsComponent {
     });
     
   }
-  
+ 
+ 
   onPurposeChange(purpose: string) {
     this.chosenPurpose = purpose;
+    
   }
   
   onDateChange(event: MatDatepickerInputEvent<Date>) {
@@ -84,12 +97,20 @@ export class ReservationsComponent {
   onThirdStepEntered() {
   if (this.chosenPurpose) {
     this.roomService.getRoomsByPurpose(this.chosenPurpose).subscribe((rooms: Room[]) => {
-      console.log('Rooms555 received:', rooms); // Add this line to log the received rooms
       this.rooms = rooms; 
     });
   }
 }
-onHeaderClick(){
-  console.log("Click header")
-}
+
+
+
+  onSelectedRoomsChange(selectedRooms: Room[]) {
+    console.log('Selected this  comp rooms:', selectedRooms);
+    this.selectedRooms = selectedRooms;
+  }
+
+
+  onRoomSelected(selected: boolean) {
+    this.roomSelected = selected;
+  }
 }

@@ -18,7 +18,6 @@ export class RoomService {
   }
 
   getRoomsByPurpose(purpose: string): Observable<Room[]> {
-    console.log(`${this.userUrl}?purpose=${purpose}`);
     return this.http.get<Room[]>(`${this.userUrl}?purpose=${purpose}`);
   }
 

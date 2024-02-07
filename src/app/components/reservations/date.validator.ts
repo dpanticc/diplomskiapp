@@ -6,7 +6,6 @@ export class DateValidator {
           const selectedDate = new Date(control.value);
           const currentDate = new Date();
           currentDate.setHours(0, 0, 0, 0); // Set hours, minutes, seconds, and milliseconds to zero for comparison
-          
           if (selectedDate < currentDate) {
             return { 'pastDate': { value: control.value } };
           }

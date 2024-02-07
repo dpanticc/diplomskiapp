@@ -35,30 +35,46 @@
       </div>
     </form>
   </mat-step>
-  <mat-step [stepControl]="thirdFormGroup">
-    <form [formGroup]="thirdFormGroup" class="formGroups">
+<mat-step [stepControl]="thirdFormGroup" >
+    <form [formGroup]="thirdFormGroup" class="formGroups" >
       
-        <ng-template matStepLabel>Choose a room for your reservation</ng-template>
+        <ng-template matStepLabel>Choose a room for your reservation: 
+          <span *ngFor="let room of selectedRooms; let last = last">
+            {{ room.name }}{{ !last ? ', ' : '' }}
+          </span>
+        </ng-template>
 
-      <!-- Include your room table component here -->
-      <app-roomstable [rooms]="rooms"></app-roomstable>
+        <app-roomstable 
+              [rooms]="rooms" 
+              [chosenPurpose]="chosenPurpose" 
+              (selectedRoomsChange)="onSelectedRoomsChange($event)"
+              (roomSelected)="onRoomSelected($event)"
+              >
+        </app-roomstable>  
+        <div>
+          Third Form Group Valid: {{ thirdFormGroup.valid }}
+        </div>
+
       <div class="buttons">
         <button mat-button matStepperPrevious class="buttonBack">Back</button>
         <button mat-button matStepperNext class="nextButton" [disabled]="!thirdFormGroup.valid">Next</button>
       </div>
     </form>
   </mat-step>
-  <mat-step [stepControl]="fourthFormGroup" >
+  <mat-step [stepControl]="fourthFormGroup" [editable]="roomSelected">
     <form [formGroup]="fourthFormGroup" class="formGroups">
       <ng-template matStepLabel>Pick a free time slot</ng-template>
-      <mat-form-field>
-        <mat-label>Address</mat-label>
-        <input matInput formControlName="fourthCtrl" placeholder="Ex. 1 Main St, New York, NY"
-               required>
-      </mat-form-field>
+      <mat-chip-listbox aria-label="Timeslot selection">
+        <mat-chip-option>08:00 - 10:00</mat-chip-option>
+        <mat-chip-option>10:00 - 12:00</mat-chip-option>
+        <mat-chip-option>12:00 - 14:00</mat-chip-option>
+        <mat-chip-option>14:00 - 16:00</mat-chip-option>
+        <mat-chip-option>16:00 - 18:00</mat-chip-option>
+        <mat-chip-option>18:00 - 20:00</mat-chip-option>
+      </mat-chip-listbox>
       <div class="buttons">
         <button mat-button matStepperPrevious class="buttonBack">Back</button>
-        <button mat-button matStepperNext class="nextButton">Next</button>
+        <button mat-button matStepperNext class="nextButton" [disabled]="!fourthFormGroup.valid">Next</button>
       </div>
     </form>
   </mat-step>
