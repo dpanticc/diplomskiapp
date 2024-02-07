@@ -9,7 +9,8 @@
     standalone: true,
     imports: [MatTableModule, MatCheckboxModule],
     templateUrl: './roomstable.component.html',
-    styleUrl: './roomstable.component.css'
+    styleUrl: './roomstable.component.css',
+    
   })
 
   export class RoomstableComponent implements OnChanges {

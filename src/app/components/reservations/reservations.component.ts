@@ -14,7 +14,6 @@ import { CustomDateAdapter, MY_DATE_FORMATS } from './custom.date.adapter';
 import { Room, RoomService } from 'src/app/services/room/room.service';
 import {MatChipsModule} from '@angular/material/chips';
 import { MatCardModule } from '@angular/material/card';
-import { RoomValidator } from './room.validator';
  
 
 @Component({
@@ -75,7 +74,6 @@ export class ReservationsComponent {
     });
 
     this.thirdFormGroup = this._formBuilder.group({
-      rooms: [[], [Validators.required, RoomValidator.selectedRoomsValidator()]] // Apply the custom validator for selected rooms
     });
 
     this.fourthFormGroup = this._formBuilder.group({

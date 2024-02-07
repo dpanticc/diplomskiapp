@@ -48,8 +48,7 @@
               [rooms]="rooms" 
               [chosenPurpose]="chosenPurpose" 
               (selectedRoomsChange)="onSelectedRoomsChange($event)"
-              (roomSelected)="onRoomSelected($event)"
-              >
+              (roomSelected)="onRoomSelected($event)">
         </app-roomstable>  
         <div>
           Third Form Group Valid: {{ thirdFormGroup.valid }}
@@ -57,11 +56,11 @@
 
       <div class="buttons">
         <button mat-button matStepperPrevious class="buttonBack">Back</button>
-        <button mat-button matStepperNext class="nextButton" [disabled]="!thirdFormGroup.valid">Next</button>
+        <button mat-button matStepperNext class="nextButton" [disabled]="!roomSelected">Next</button>
       </div>
     </form>
   </mat-step>
-  <mat-step [stepControl]="fourthFormGroup" [editable]="roomSelected">
+  <mat-step [stepControl]="fourthFormGroup" [editable]="!roomSelected">
     <form [formGroup]="fourthFormGroup" class="formGroups">
       <ng-template matStepLabel>Pick a free time slot</ng-template>
       <mat-chip-listbox aria-label="Timeslot selection">
