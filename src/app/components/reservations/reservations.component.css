@@ -36,3 +36,11 @@ table {
   width: 300px;
 }
 
+.example-full-width{
+  margin-right: 20px;
+}
+
+.chosen{
+  color: yellowgreen;
+}
+

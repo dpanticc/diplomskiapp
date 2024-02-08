@@ -3,7 +3,19 @@
       <div class="step-container">
 
     <form [formGroup]="firstFormGroup" class="formGroups">
-      <ng-template matStepLabel>Enter purpose for your reservation: {{ chosenPurpose }}</ng-template>
+      <ng-template matStepLabel> 
+        Enter name and purpose for your reservation: 
+        <span [class.chosen]="name">{{ name }}</span> 
+        <span *ngIf="chosenPurpose" [class.chosen]="chosenPurpose"> - {{ chosenPurpose }}</span>
+      </ng-template>
+      <mat-form-field class="example-full-width">
+        <mat-label>Name</mat-label>
+        <input matInput [formControl]="nameFormControl">
+        
+        <mat-error *ngIf="nameFormControl.hasError('required')">
+          Name is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
       <mat-form-field class="example-full-width">
         <mat-label>Reservation purpose</mat-label>
         <mat-select formControlName="purpose" placeholder="Pick one" (selectionChange)="onPurposeChange($event.value); onThirdStepEntered()">
@@ -11,7 +23,6 @@
             {{ purpose }}
           </mat-option>
         </mat-select>
-        
       </mat-form-field>
       <div class="buttons">
         <button mat-button matStepperNext class="nextButton" [disabled]="!firstFormGroup.valid">Next</button>
@@ -21,8 +32,11 @@
   </mat-step>
   <mat-step [stepControl]="secondFormGroup" >
     <form [formGroup]="secondFormGroup" class="formGroups">
-      <ng-template matStepLabel>Select date for your reservation: {{ chosenDate }}</ng-template>
-      <mat-form-field class="example-full-width">
+        <ng-template matStepLabel>
+          Select date for your reservation: 
+          <span [class.chosen]="chosenDate">{{ chosenDate }}</span>
+        </ng-template>
+        <mat-form-field class="example-full-width">
         <mat-label>Choose a present date</mat-label>
         <input matInput [matDatepicker]="picker" formControlName="date" (dateChange)="onDateChange($event)">
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
@@ -39,7 +53,7 @@
     <form [formGroup]="thirdFormGroup" class="formGroups" >
       
         <ng-template matStepLabel>Choose a room for your reservation: 
-          <span *ngFor="let room of selectedRooms; let last = last">
+          <span  [class.chosen]="chosenDate" *ngFor="let room of selectedRooms; let last = last">
             {{ room.name }}{{ !last ? ', ' : '' }}
           </span>
         </ng-template>
@@ -50,13 +64,9 @@
               (selectedRoomsChange)="onSelectedRoomsChange($event)"
               (roomSelected)="onRoomSelected($event)">
         </app-roomstable>  
-        <div>
-          Third Form Group Valid: {{ thirdFormGroup.valid }}
-        </div>
-
       <div class="buttons">
         <button mat-button matStepperPrevious class="buttonBack">Back</button>
-        <button mat-button matStepperNext class="nextButton" [disabled]="!roomSelected">Next</button>
+        <button mat-button matStepperNext class="nextButton" [disabled]="!roomSelected" (click)="onNextButtonClick()">Next</button>
       </div>
     </form>
   </mat-step>
@@ -64,12 +74,9 @@
     <form [formGroup]="fourthFormGroup" class="formGroups">
       <ng-template matStepLabel>Pick a free time slot</ng-template>
       <mat-chip-listbox aria-label="Timeslot selection">
-        <mat-chip-option>08:00 - 10:00</mat-chip-option>
-        <mat-chip-option>10:00 - 12:00</mat-chip-option>
-        <mat-chip-option>12:00 - 14:00</mat-chip-option>
-        <mat-chip-option>14:00 - 16:00</mat-chip-option>
-        <mat-chip-option>16:00 - 18:00</mat-chip-option>
-        <mat-chip-option>18:00 - 20:00</mat-chip-option>
+        <mat-chip-listbox aria-label="Timeslot selection">
+          <mat-chip-option *ngFor="let timeSlot of timeSlots">{{ timeSlot }}</mat-chip-option>
+        </mat-chip-listbox>
       </mat-chip-listbox>
       <div class="buttons">
         <button mat-button matStepperPrevious class="buttonBack">Back</button>
@@ -85,5 +92,3 @@
     </div>
   </mat-step>
 </mat-stepper>
-
-

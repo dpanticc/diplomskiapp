@@ -14,7 +14,17 @@ import { CustomDateAdapter, MY_DATE_FORMATS } from './custom.date.adapter';
 import { Room, RoomService } from 'src/app/services/room/room.service';
 import {MatChipsModule} from '@angular/material/chips';
 import { MatCardModule } from '@angular/material/card';
+import { ReservationService } from 'src/app/services/reservation/reservation.service';
  
+function roomSelectedValidator(roomSelected: boolean): ValidatorFn {
+  return (control: AbstractControl): {[key: string]: any} | null => {
+    if (!roomSelected) {
+      return { 'roomNotSelected': true }; // Return an error object if room is not selected
+    }
+    return null; // Return null if validation passes
+  };
+}
+
 
 @Component({
   selector: 'app-reservations',
@@ -46,7 +56,7 @@ export class ReservationsComponent {
   myControl = new FormControl('');
   reservationPurposes: string[] = ['Lecture', 'Exam', 'Public Meeting', 'Internal Meeting', 'Conference'];
   filteredOptions: string[] | undefined;
-  selectedDate: Date | null = null; // Define selectedDate property
+  selectedDate: Date | null = null; 
 
   firstFormGroup: FormGroup ;
   secondFormGroup: FormGroup ;
@@ -60,13 +70,21 @@ export class ReservationsComponent {
   rooms: Room[] = [];
   selectedRooms: Room[] = [];   
 
+  nameFormControl = new FormControl('', [Validators.required]);
+  name: string | null | undefined;
+  timeSlots: string[] = ['08:00 - 10:00', '10:00 - 12:00', '12:00 - 14:00', '14:00 - 16:00', '16:00 - 18:00', '18:00 - 20:00'];
 
 
-  constructor(private _formBuilder: FormBuilder, private datePipe: DatePipe, private roomService: RoomService) {
+  reservedTimeSlots: any[] = []; 
+
+
+
+  constructor(private _formBuilder: FormBuilder, private datePipe: DatePipe, private roomService: RoomService, private reservationService: ReservationService) {
     this.filteredOptions = this.reservationPurposes.slice();
 
     this.firstFormGroup = this._formBuilder.group({
-      purpose: ['', Validators.required]
+      purpose: ['', Validators.required],
+      name: this.nameFormControl
     });
 
     this.secondFormGroup = this._formBuilder.group({
@@ -76,8 +94,17 @@ export class ReservationsComponent {
     this.thirdFormGroup = this._formBuilder.group({
     });
 
+    this.updateRoomSelectedValidator();
+
+
     this.fourthFormGroup = this._formBuilder.group({
       fourthCtrl: ['', Validators.required]
+    });
+    
+    this.nameFormControl.valueChanges.subscribe((value: string | null) => {
+      if (value !== null) { 
+        this.name = value;
+      }
     });
     
   }
@@ -110,5 +137,34 @@ export class ReservationsComponent {
 
   onRoomSelected(selected: boolean) {
     this.roomSelected = selected;
+    this.updateRoomSelectedValidator(); // Update the validator when roomSelected changes
+
+  }
+
+  private updateRoomSelectedValidator() {
+    const validator = roomSelectedValidator(this.roomSelected);
+    this.thirdFormGroup.setValidators(validator);
+    this.thirdFormGroup.updateValueAndValidity(); // Trigger validation update
+  }
+
+  isTimeSlotReserved(timeSlot: any): boolean {
+    // Check if the provided time slot is reserved
+    return this.reservedTimeSlots.some(reservedSlot => reservedSlot.startTime === timeSlot.startTime && reservedSlot.endTime === timeSlot.endTime);
+  }
+  
+  onNextButtonClick() {
+    if (this.selectedRooms.length > 0) {
+      const selectedDate = this.chosenDate; // Assuming you have already set chosenDate
+      if (selectedDate) {
+        this.selectedRooms.forEach(room => {
+          this.reservationService.getReservedTimeSlots(selectedDate, room.roomId).subscribe((timeSlots: string[]) => {
+            // Do something with the time slots for this room
+            console.log('Time slots for room', room.roomId, ':', timeSlots);
+            // You may want to merge the time slots from different rooms into a single array here
+          });
+        });
+      }
+    }
   }
 }
+
