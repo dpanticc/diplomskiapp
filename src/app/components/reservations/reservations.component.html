@@ -72,15 +72,16 @@
   </mat-step>
   <mat-step [stepControl]="fourthFormGroup" [editable]="!roomSelected">
     <form [formGroup]="fourthFormGroup" class="formGroups">
-      <ng-template matStepLabel>Pick a free time slot</ng-template>
+      <ng-template matStepLabel>Pick a free time slot
+        <span [class.chosen]="chosenDate">{{ selectedTimeSlot }}</span>
+
+      </ng-template>
       <mat-chip-listbox aria-label="Timeslot selection">
-        <mat-chip-listbox aria-label="Timeslot selection">
-          <mat-chip-option *ngFor="let timeSlot of timeSlots">{{ timeSlot }}</mat-chip-option>
-        </mat-chip-listbox>
+        <mat-chip-option [disabled]="isTimeSlotReserved(timeSlot)"  *ngFor="let timeSlot of timeSlots" (click)="onTimeSlotSelected(timeSlot)" [selected]="selectedTimeSlot === timeSlot">{{ timeSlot }}</mat-chip-option>
       </mat-chip-listbox>
       <div class="buttons">
         <button mat-button matStepperPrevious class="buttonBack">Back</button>
-        <button mat-button matStepperNext class="nextButton" [disabled]="!fourthFormGroup.valid">Next</button>
+        <button mat-button matStepperNext class="nextButton" [disabled]="!isSelectedTimeSlot" (click)="onFinishButtonClick()">Finish</button>
       </div>
     </form>
   </mat-step>
@@ -88,7 +89,7 @@
     <ng-template matStepLabel>Done</ng-template>
     <p>You are now done.</p>
     <div>
-      <button mat-button (click)="stepper.reset()">Ok</button>
+      <button mat-button (click)="onReset()">Ok</button>
     </div>
   </mat-step>
 </mat-stepper>

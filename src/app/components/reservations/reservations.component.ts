@@ -53,6 +53,8 @@ function roomSelectedValidator(roomSelected: boolean): ValidatorFn {
 
 export class ReservationsComponent {
   @ViewChild('input', { static: true }) input!: ElementRef<HTMLInputElement>;
+  @ViewChild('stepper') stepper!: MatStepper; 
+
   myControl = new FormControl('');
   reservationPurposes: string[] = ['Lecture', 'Exam', 'Public Meeting', 'Internal Meeting', 'Conference'];
   filteredOptions: string[] | undefined;
@@ -74,10 +76,12 @@ export class ReservationsComponent {
   name: string | null | undefined;
   timeSlots: string[] = ['08:00 - 10:00', '10:00 - 12:00', '12:00 - 14:00', '14:00 - 16:00', '16:00 - 18:00', '18:00 - 20:00'];
 
+  selectedTimeSlot: string | undefined;
+
+  isSelectedTimeSlot : boolean = false;
+
 
   reservedTimeSlots: any[] = []; 
-
-
 
   constructor(private _formBuilder: FormBuilder, private datePipe: DatePipe, private roomService: RoomService, private reservationService: ReservationService) {
     this.filteredOptions = this.reservationPurposes.slice();
@@ -98,7 +102,6 @@ export class ReservationsComponent {
 
 
     this.fourthFormGroup = this._formBuilder.group({
-      fourthCtrl: ['', Validators.required]
     });
     
     this.nameFormControl.valueChanges.subscribe((value: string | null) => {
@@ -127,10 +130,7 @@ export class ReservationsComponent {
   }
 }
 
-
-
   onSelectedRoomsChange(selectedRooms: Room[]) {
-    console.log('Selected this  comp rooms:', selectedRooms);
     this.selectedRooms = selectedRooms;
   }
 
@@ -147,24 +147,83 @@ export class ReservationsComponent {
     this.thirdFormGroup.updateValueAndValidity(); // Trigger validation update
   }
 
-  isTimeSlotReserved(timeSlot: any): boolean {
-    // Check if the provided time slot is reserved
-    return this.reservedTimeSlots.some(reservedSlot => reservedSlot.startTime === timeSlot.startTime && reservedSlot.endTime === timeSlot.endTime);
+  isTimeSlotReserved(timeSlot: string): boolean {
+    return this.reservedTimeSlots.includes(timeSlot);
   }
   
   onNextButtonClick() {
     if (this.selectedRooms.length > 0) {
       const selectedDate = this.chosenDate; // Assuming you have already set chosenDate
-      if (selectedDate) {
+      if (selectedDate !== undefined) { // Check if chosenDate is not undefined
+        const selectedDateStr = selectedDate.toString(); // Parse selectedDate to a string
+
         this.selectedRooms.forEach(room => {
-          this.reservationService.getReservedTimeSlots(selectedDate, room.roomId).subscribe((timeSlots: string[]) => {
-            // Do something with the time slots for this room
-            console.log('Time slots for room', room.roomId, ':', timeSlots);
+          this.reservationService.getReservedTimeSlots(room.roomId, selectedDateStr).subscribe((reservedTimeSlots: any[]) => {
+            // Extract the start time from each reserved time slot and match it with the time slots array
+            const reservedSlots = reservedTimeSlots.map(slot => {
+              const startTime = slot.startTime.split(':')[0] + ':00 - ' + slot.endTime.split(':')[0] + ':00';
+              return startTime;
+            });
+            
+            // Update the reserved time slots array with the converted time slots
+            this.reservedTimeSlots = reservedSlots;
+            console.log(room.name + 'reserved slots: '+ reservedSlots);
+  
+  
             // You may want to merge the time slots from different rooms into a single array here
           });
         });
       }
     }
+  }  
+
+  onTimeSlotSelected(timeSlot: string) {
+    if (this.selectedTimeSlot === timeSlot) {
+      this.selectedTimeSlot = undefined;
+      this.isSelectedTimeSlot = false;
+    } else {
+      this.selectedTimeSlot = timeSlot;
+      this.isSelectedTimeSlot = true;
+    }
+  }
+
+  onFinishButtonClick() {
+    // Perform reservation process here
+    // You can access the chosen data from previous steps using the component's properties
+  
+    // Example reservation process:
+    // Assuming you have a reservation service, you can call a method to make the reservation
+    const reservationData = {
+      name: this.name,
+      purpose: this.chosenPurpose,
+      date: this.chosenDate,
+      rooms: this.selectedRooms,
+      timeSlot: this.selectedTimeSlot
+    };
+  
+    // Call the reservation service method to make the reservation
+    
+  }
+
+  onReset() {
+    // Reset form groups
+    this.firstFormGroup.reset();
+    this.secondFormGroup.reset();
+    this.thirdFormGroup.reset();
+    this.fourthFormGroup.reset();
+    
+    // Clear component properties
+    this.nameFormControl.reset(); // Reset the form control for the name
+    this.name = null; // Clear the name property
+    this.chosenPurpose = undefined; // Reset the chosen purpose
+    this.chosenDate = undefined; // Reset the chosen date
+    this.selectedRooms = []; // Clear the selected rooms array
+    this.selectedTimeSlot = undefined; // Reset the selected time slot
+    this.isSelectedTimeSlot = false; // Reset the flag for selected time slot
+    this.reservedTimeSlots = []; // Clear the reserved time slots array
+    
+    // Reset the stepper (assuming you've fixed the ViewChild issue as mentioned previously)
+    this.stepper.reset();
   }
 }
 
