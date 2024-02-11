@@ -1,6 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/internal/Observable';
+import { ReservationData } from 'src/app/models/reservation.model';
+import { TimeSlotData } from 'src/app/models/time-slot.model';
 
 @Injectable({
   providedIn: 'root'
@@ -25,5 +27,20 @@ export class ReservationService {
 
     // Make GET request to backend endpoint
     return this.http.get<any>(`${this.baseUrl}/${roomId}/timeslots`, { params });
+  }
+
+  createReservation(reservationData: ReservationData, selectedTimeSlot: TimeSlotData): Observable<any> {
+    const url = `${this.baseUrl}/reservations`;
+
+    // Create a wrapper object to hold both reservationData and selectedTimeSlot
+    const ReservationTimeSlotDTO = {
+      reservationDTO: reservationData,
+      timeSlotDTO: selectedTimeSlot
+    };
+
+    console.log(ReservationTimeSlotDTO);
+
+    // Make the HTTP POST request with the wrapper object as the request body
+    return this.http.post(url, ReservationTimeSlotDTO);
   }
 }

@@ -15,6 +15,8 @@ import { Room, RoomService } from 'src/app/services/room/room.service';
 import {MatChipsModule} from '@angular/material/chips';
 import { MatCardModule } from '@angular/material/card';
 import { ReservationService } from 'src/app/services/reservation/reservation.service';
+import { TimeSlotData } from 'src/app/models/time-slot.model';
+import { ReservationData } from 'src/app/models/reservation.model';
  
 function roomSelectedValidator(roomSelected: boolean): ValidatorFn {
   return (control: AbstractControl): {[key: string]: any} | null => {
@@ -152,30 +154,27 @@ export class ReservationsComponent {
   }
   
   onNextButtonClick() {
-    if (this.selectedRooms.length > 0) {
-      const selectedDate = this.chosenDate; // Assuming you have already set chosenDate
-      if (selectedDate !== undefined) { // Check if chosenDate is not undefined
-        const selectedDateStr = selectedDate.toString(); // Parse selectedDate to a string
-
-        this.selectedRooms.forEach(room => {
-          this.reservationService.getReservedTimeSlots(room.roomId, selectedDateStr).subscribe((reservedTimeSlots: any[]) => {
-            // Extract the start time from each reserved time slot and match it with the time slots array
-            const reservedSlots = reservedTimeSlots.map(slot => {
-              const startTime = slot.startTime.split(':')[0] + ':00 - ' + slot.endTime.split(':')[0] + ':00';
-              return startTime;
-            });
-            
-            // Update the reserved time slots array with the converted time slots
-            this.reservedTimeSlots = reservedSlots;
-            console.log(room.name + 'reserved slots: '+ reservedSlots);
+    if (this.selectedRooms.length > 0 && this.chosenDate) {
+      const selectedDateStr = this.chosenDate.toString();
+      this.reservedTimeSlots = []; // Clear reserved time slots before fetching new ones
   
-  
-            // You may want to merge the time slots from different rooms into a single array here
+      this.selectedRooms.forEach(room => {
+        this.reservationService.getReservedTimeSlots(room.roomId, selectedDateStr).subscribe((reservedTimeSlots: any[]) => {
+          const convertedSlots = reservedTimeSlots.map(slot => {
+            return slot.startTime.split(':')[0] + ':00 - ' + slot.endTime.split(':')[0] + ':00';
           });
+          this.reservedTimeSlots.push(...convertedSlots);
+          
+  
+          // Check if this is the last room before updating the reserved time slots
+          if (room === this.selectedRooms[this.selectedRooms.length - 1]) {
+            // After fetching all reserved time slots, navigate to the next step
+            }
         });
-      }
+      });
+      
     }
-  }  
+  }
 
   onTimeSlotSelected(timeSlot: string) {
     if (this.selectedTimeSlot === timeSlot) {
@@ -188,21 +187,44 @@ export class ReservationsComponent {
   }
 
   onFinishButtonClick() {
-    // Perform reservation process here
-    // You can access the chosen data from previous steps using the component's properties
+    if (this.selectedTimeSlot) {
+
+      const roomIds: number[] = this.selectedRooms.map(room => room.roomId);
+
+      const reservationData: ReservationData = {
+        name: this.name,
+        purpose: this.chosenPurpose,
+        roomIds: roomIds,
+        username: localStorage.getItem('username') || '' // Ensure that the return type of getItem matches string | null
+      };
   
-    // Example reservation process:
-    // Assuming you have a reservation service, you can call a method to make the reservation
-    const reservationData = {
-      name: this.name,
-      purpose: this.chosenPurpose,
-      date: this.chosenDate,
-      rooms: this.selectedRooms,
-      timeSlot: this.selectedTimeSlot
-    };
+      const timeSlotData: TimeSlotData = {
+        date: this.chosenDate,
+        startTime: this.selectedTimeSlot.split(' - ')[0],
+        endTime: this.selectedTimeSlot.split(' - ')[1],
+        reserved: true
+      };
+
+      
+    console.log('Reservation Data:', reservationData);
+    console.log('Time Slot Data:', timeSlotData);
   
-    // Call the reservation service method to make the reservation
-    
+      // Perform reservation process here
+      // Call the reservation service to create reservation and time slot
+      this.reservationService.createReservation(reservationData, timeSlotData).subscribe(
+        (response: any) => {
+          // Handle successful reservation and time slot creation response
+          console.log('Reservation and Time Slot created successfully:', response);
+        },
+        (error: any) => {
+          // Handle error
+          console.error('Error creating reservation and time slot:', error);
+        }
+      );
+    } else {
+      console.error('No time slot selected');
+      // Handle the case where no time slot is selected, e.g., display an error message to the user
+    }
   }
 
   onReset() {

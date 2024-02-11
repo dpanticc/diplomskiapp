@@ -6,10 +6,10 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class RoomService {
-
+  
+  
   private apiUrl = 'http://localhost:8080/api/admin/rooms';
   private userUrl = 'http://localhost:8080/api/user/rooms';
-
 
   constructor(private http: HttpClient) {}
 
@@ -17,12 +17,12 @@ export class RoomService {
     return this.http.get<Room[]>(`${this.apiUrl}`);
   }
 
-  getRoomsByPurpose(purpose: string): Observable<Room[]> {
-    return this.http.get<Room[]>(`${this.userUrl}?purpose=${purpose}`);
-  }
-
   addRoom(newRoom: Room): Observable<Room> {
     return this.http.post<Room>(this.apiUrl, newRoom);
+  }
+
+  deleteRoom(roomId: number) {
+    return this.http.delete<void>(`${this.apiUrl}?room=${roomId}`);
   }
 
   updateRoom(id: number, formData: Room): Observable<Room> {
@@ -30,8 +30,8 @@ export class RoomService {
     return this.http.put<Room>(url, formData);
   }
 
-  deleteRoom(roomId: number) {
-    return this.http.delete<void>(`${this.apiUrl}/${roomId}`);
+  getRoomsByPurpose(purpose: string): Observable<Room[]> {
+    return this.http.get<Room[]>(`${this.userUrl}?purpose=${purpose}`);
   }
 }
 
