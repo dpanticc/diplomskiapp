@@ -11,6 +11,7 @@ import { ReservationsComponent } from './components/reservations/reservations.co
 import { RoomsComponent } from './components/rooms/rooms.component';
 import { UsersComponent } from './components/users/users.component';
 import { AccountComponent } from './components/account/account.component';
+import { ReservationManagerComponent } from './components/reservation-manager/reservation-manager.component';
 
 export const routes: Routes = [
 
@@ -28,7 +29,7 @@ export const routes: Routes = [
     children: [
       { path: 'users', component: UsersComponent },
       { path: 'rooms', component: RoomsComponent },
-      { path: 'reservations', component: ReservationsComponent },
+      { path: 'reservation-manager', component: ReservationManagerComponent },
     ],
     canActivate:[RoleGuard]
   },

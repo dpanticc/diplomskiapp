@@ -8,6 +8,7 @@ import { TimeSlotData } from 'src/app/models/time-slot.model';
   providedIn: 'root'
 })
 export class ReservationService {
+ 
   private baseUrl = 'http://localhost:8080/api/user';
 
   constructor(private http: HttpClient) {}
@@ -37,8 +38,6 @@ export class ReservationService {
       reservationDTO: reservationData,
       timeSlotDTO: selectedTimeSlot
     };
-
-    console.log(ReservationTimeSlotDTO);
 
     // Make the HTTP POST request with the wrapper object as the request body
     return this.http.post(url, ReservationTimeSlotDTO);

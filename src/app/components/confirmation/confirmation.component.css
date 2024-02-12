@@ -1,0 +1,22 @@
+.dialog-buttons{
+    align-self: center;
+    margin-bottom: 15px;
+}
+h1{
+    align-self: center;
+}
+.dialog-items{
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border: 1px solid  rgb(139, 139, 139);
+    border-radius: 0;
+
+ }
+
+ mat-dialog-content{
+    padding: 20px;
+ }
+

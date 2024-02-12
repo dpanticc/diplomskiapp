@@ -12,8 +12,7 @@
         <mat-label>Name</mat-label>
         <input matInput [formControl]="nameFormControl">
         
-        <mat-error *ngIf="nameFormControl.hasError('required')">
-          Name is <strong>required</strong>
+        <mat-error *ngIf="nameFormControl.hasError('required')">Name is <strong>required</strong>
         </mat-error>
       </mat-form-field>
       <mat-form-field class="example-full-width">
@@ -81,13 +80,13 @@
       </mat-chip-listbox>
       <div class="buttons">
         <button mat-button matStepperPrevious class="buttonBack">Back</button>
-        <button mat-button matStepperNext class="nextButton" [disabled]="!isSelectedTimeSlot" (click)="onFinishButtonClick()">Finish</button>
+        <button mat-button class="nextButton" [disabled]="!isSelectedTimeSlot" (click)="onFinishButtonClick()">Finish</button>
       </div>
     </form>
   </mat-step>
   <mat-step>
     <ng-template matStepLabel>Done</ng-template>
-    <p>You are now done.</p>
+    <p>Your request has been sent to the admin. You will be informed if the reservation is confirmed by your email!</p>
     <div>
       <button mat-button (click)="onReset()">Ok</button>
     </div>

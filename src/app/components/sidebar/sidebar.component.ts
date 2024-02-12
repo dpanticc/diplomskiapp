@@ -27,14 +27,14 @@ export class SidebarComponent {
   }
 
   adminLinks = [
-    { label: 'Users', icon: 'people' },
-    { label: 'Rooms', icon: 'meeting_room' },
-    { label: 'Reservations', icon: 'event' }
+    { label: 'Users', path: 'users', icon: 'people' },
+    { label: 'Rooms', path: 'rooms',  icon: 'meeting_room' },
+    { label: 'Reservations', path: 'reservation-manager', icon: 'event' }
   ];
 
   regularUserLinks = [
-    { label: 'Reservations', icon: 'event' },
-    { label: 'Account', icon: 'account_circle' }
+    { label: 'Reservations', path: 'reservations',  icon: 'event' },
+    { label: 'Account', path: 'account',  icon: 'account_circle' }
   ];
   activeLink: string | undefined;
   background: ThemePalette = undefined;
@@ -56,17 +56,24 @@ export class SidebarComponent {
   navigateTo(link: string): void {
     // Determine the base URL based on the user role
     const baseUrl = this.loginService.isAdmin() ? '/admin-home' : '/';
-  
-    // Navigate to the selected link
-    this.router.navigate([baseUrl, link.toLowerCase()]);
+    
+    // Find the corresponding link object
+    const selectedLink = this.adminLinks.find(item => item.label === link) || this.regularUserLinks.find(item => item.label === link);
+    
+    if (selectedLink) {
+      // Navigate to the selected link's path
+      this.router.navigate([baseUrl, selectedLink.path]);
+    }
   }
+  
   getRouterLink(link: string | { label: string }): string {
     if (typeof link === 'string') {
-        return link.toLowerCase();
-    } else if (typeof link === 'object' && 'label' in link) {
-        return link.label.toLowerCase();
+      return link.toLowerCase();
+    } else if (typeof link === 'object' && 'path' in link) {
+      const typedLink = link as { path: string }; // Type assertion
+      return typedLink.path.toLowerCase();
     }
-
+  
     return '';
-}
+  }
 }

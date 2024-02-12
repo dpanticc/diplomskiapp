@@ -17,6 +17,8 @@ import { MatCardModule } from '@angular/material/card';
 import { ReservationService } from 'src/app/services/reservation/reservation.service';
 import { TimeSlotData } from 'src/app/models/time-slot.model';
 import { ReservationData } from 'src/app/models/reservation.model';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationComponent } from '../confirmation/confirmation.component';
  
 function roomSelectedValidator(roomSelected: boolean): ValidatorFn {
   return (control: AbstractControl): {[key: string]: any} | null => {
@@ -85,7 +87,9 @@ export class ReservationsComponent {
 
   reservedTimeSlots: any[] = []; 
 
-  constructor(private _formBuilder: FormBuilder, private datePipe: DatePipe, private roomService: RoomService, private reservationService: ReservationService) {
+  constructor(private _formBuilder: FormBuilder, private datePipe: DatePipe, private roomService: RoomService, private reservationService: ReservationService,
+    private dialog: MatDialog
+    ) {
     this.filteredOptions = this.reservationPurposes.slice();
 
     this.firstFormGroup = this._formBuilder.group({
@@ -187,45 +191,52 @@ export class ReservationsComponent {
   }
 
   onFinishButtonClick() {
-    if (this.selectedTimeSlot) {
+    try {
+        if (this.selectedTimeSlot) {
 
-      const roomIds: number[] = this.selectedRooms.map(room => room.roomId);
+            const roomIds: number[] = this.selectedRooms.map(room => room.roomId);
 
-      const reservationData: ReservationData = {
-        name: this.name,
-        purpose: this.chosenPurpose,
-        roomIds: roomIds,
-        username: localStorage.getItem('username') || '' // Ensure that the return type of getItem matches string | null
-      };
-  
-      const timeSlotData: TimeSlotData = {
-        date: this.chosenDate,
-        startTime: this.selectedTimeSlot.split(' - ')[0],
-        endTime: this.selectedTimeSlot.split(' - ')[1],
-        reserved: true
-      };
+            const reservationData: ReservationData = {
+                name: this.name,
+                purpose: this.chosenPurpose,
+                roomIds: roomIds,
+                username: localStorage.getItem('username') || '' // Ensure that the return type of getItem matches string | null
+            };
 
-      
-    console.log('Reservation Data:', reservationData);
-    console.log('Time Slot Data:', timeSlotData);
-  
-      // Perform reservation process here
-      // Call the reservation service to create reservation and time slot
-      this.reservationService.createReservation(reservationData, timeSlotData).subscribe(
-        (response: any) => {
-          // Handle successful reservation and time slot creation response
-          console.log('Reservation and Time Slot created successfully:', response);
-        },
-        (error: any) => {
-          // Handle error
-          console.error('Error creating reservation and time slot:', error);
+            const timeSlotData: TimeSlotData = {
+                date: this.chosenDate,
+                startTime: this.selectedTimeSlot.split(' - ')[0],
+                endTime: this.selectedTimeSlot.split(' - ')[1],
+                reserved: false
+            };
+
+
+            const dialogRef = this.dialog.open(ConfirmationComponent, {
+                width: '400px',
+                data: {
+                    titlemessage: 'Confirm Reservation Creation',
+                    reservationData: reservationData,
+                    timeSlotData: timeSlotData,
+                    this: this.selectedRooms
+                }
+            });
+
+            dialogRef.afterClosed().subscribe(result => {
+                if (result) {
+                    // User confirmed, proceed with reservation creation
+                    this.stepper.next();
+                } else {
+                    // User canceled, do nothing or handle cancellation
+                }
+            });
+        } else {
+            console.error('No time slot selected');
+            // Handle the case where no time slot is selected, e.g., display an error message to the user
         }
-      );
-    } else {
-      console.error('No time slot selected');
-      // Handle the case where no time slot is selected, e.g., display an error message to the user
+    } catch (error) {
+        console.error('An error occurred:', error);
     }
-  }
+}
 
   onReset() {
     // Reset form groups

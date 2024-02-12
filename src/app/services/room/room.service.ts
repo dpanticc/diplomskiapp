@@ -6,10 +6,10 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class RoomService {
-  
-  
+
   private apiUrl = 'http://localhost:8080/api/admin/rooms';
   private userUrl = 'http://localhost:8080/api/user/rooms';
+
 
   constructor(private http: HttpClient) {}
 
@@ -17,12 +17,12 @@ export class RoomService {
     return this.http.get<Room[]>(`${this.apiUrl}`);
   }
 
-  addRoom(newRoom: Room): Observable<Room> {
-    return this.http.post<Room>(this.apiUrl, newRoom);
+  getRoomsByPurpose(purpose: string): Observable<Room[]> {
+    return this.http.get<Room[]>(`${this.userUrl}?purpose=${purpose}`);
   }
 
-  deleteRoom(roomId: number) {
-    return this.http.delete<void>(`${this.apiUrl}?room=${roomId}`);
+  addRoom(newRoom: Room): Observable<Room> {
+    return this.http.post<Room>(this.apiUrl, newRoom);
   }
 
   updateRoom(id: number, formData: Room): Observable<Room> {
@@ -30,8 +30,8 @@ export class RoomService {
     return this.http.put<Room>(url, formData);
   }
 
-  getRoomsByPurpose(purpose: string): Observable<Room[]> {
-    return this.http.get<Room[]>(`${this.userUrl}?purpose=${purpose}`);
+  deleteRoom(roomId: number) {
+    return this.http.delete<void>(`${this.apiUrl}/${roomId}`);
   }
 }
 
@@ -41,6 +41,4 @@ export interface Room {
   floor: string;
   capacity: number;
   details: string;
-  
-  
 }
