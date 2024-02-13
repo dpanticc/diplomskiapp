@@ -1,0 +1,51 @@
+
+
+
+
+
+
+.table{
+    background-color:#4b4b4b;
+    border: 1px solid  rgb(139, 139, 139);
+}
+
+.headerCard{
+    margin-bottom: 20px;
+}
+
+.splitter{
+    margin-top: 40px;
+}
+
+.spacer{
+    flex: 1 1 auto;
+}
+
+.mat-mdc-card-header{
+
+    align-items: baseline;
+
+}
+
+
+#acceptButton{
+    margin-right: 30px;
+    background-color: yellowgreen;
+}
+
+
+  #acceptButton {
+    background-color: yellowgreen;
+  }
+
+  .column-cell {
+    max-width: 150px;
+}
+  
+mat-paginator{
+    margin-top: 17px;
+}
+
+.mat-mdc-row:hover {
+    background-color: rgba(124, 123, 124, 0.5); /* Adjust the background color for hover effect */
+  }
