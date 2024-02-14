@@ -6,24 +6,10 @@ import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
-
-
-
-export interface ReservationData {
-  id: string;
-  name: string;
-  purpose: string;
-  room: string;
-  date: string;
-  timeSlot: string;
-  username: string;
-}
-
-const PURPOSES: string[] = ['Meeting', 'Conference', 'Training'];
-const ROOMS: string[] = ['Room 1', 'Room 2', 'Room 3'];
-const DATES: string[] = ['2024-02-01', '2024-02-02', '2024-02-03'];
-const TIME_SLOTS: string[] = ['9:00 - 10:00', '10:00 - 11:00', '11:00 - 12:00'];
-const USERNAMES: string[] = ['user1', 'user2', 'user3'];
+import { ReservationService } from 'src/app/services/reservation/reservation.service';
+import { ReservationDTO } from 'src/app/models/reservationDTO.model';
+import { RoomService } from 'src/app/services/room/room.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-reservation-manager',
@@ -36,20 +22,57 @@ export class ReservationManagerComponent implements AfterViewInit {
   displayedColumnsRequest: string[] = ['name', 'purpose', 'room', 'date', 'timeSlot', 'username', 'accept-decline'];
   displayedColumns: string[] = ['name', 'purpose', 'room', 'date', 'timeSlot', 'username', 'cancel'];
 
-  dataSource: MatTableDataSource<ReservationData>;
+  dataSource: MatTableDataSource<ReservationDTO>;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor() {
-    const reservations = Array.from({ length: 100 }, (_, k) => createNewReservation(k + 1));
-    this.dataSource = new MatTableDataSource(reservations);
+  constructor(private reservationService: ReservationService,  private roomService: RoomService  ) {
+    this.dataSource = new MatTableDataSource<ReservationDTO>([]);
   }
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+    this.fetchPendingReservations();
   }
+
+  fetchPendingReservations() {
+    this.reservationService.getPendingReservations().subscribe((reservations) => {
+
+      
+      // Fetch room names for each reservation
+      const roomNameRequests = reservations.map(reservation => this.roomService.getRoomNamesByIds(reservation.roomIds));
+  
+      // Use forkJoin to combine multiple observables into one
+      forkJoin(roomNameRequests).subscribe((roomNamesArray: string[][]) => {
+        // Update the dataSource with formatted data
+        const formattedReservations = reservations.map((reservation, index) => {
+          const startTime = reservation.startTime;
+          const endTime = reservation.endTime;
+          const timeSlot = `${startTime} : ${endTime}`;
+          
+          
+          // Assuming roomNamesArray[index] contains the room names for the current reservation
+          const roomNames = roomNamesArray[index].join(', ');
+          
+          return { ...reservation, timeSlot, roomNames };
+        });
+  
+        // Update the dataSource with formatted reservations
+        this.dataSource.data = formattedReservations;
+        
+        // Set paginator and sort
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+        
+        console.log(formattedReservations);
+      });
+    });
+  }
+
+  
+  
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -58,21 +81,4 @@ export class ReservationManagerComponent implements AfterViewInit {
       this.dataSource.paginator.firstPage();
     }
   }
-}
-
-function createNewReservation(id: number): ReservationData {
-  const purpose = PURPOSES[Math.floor(Math.random() * PURPOSES.length)];
-  const room = ROOMS[Math.floor(Math.random() * ROOMS.length)];
-  const date = DATES[Math.floor(Math.random() * DATES.length)];
-  const timeSlot = TIME_SLOTS[Math.floor(Math.random() * TIME_SLOTS.length)];
-  const username = USERNAMES[Math.floor(Math.random() * USERNAMES.length)];
-  return {
-    id: id.toString(),
-    name: `Reservation ${id}`,
-    purpose: purpose,
-    room: room,
-    date: date,
-    timeSlot: timeSlot,
-    username: username
-  };
 }

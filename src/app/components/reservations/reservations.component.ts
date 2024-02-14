@@ -15,7 +15,7 @@ import { Room, RoomService } from 'src/app/services/room/room.service';
 import {MatChipsModule} from '@angular/material/chips';
 import { MatCardModule } from '@angular/material/card';
 import { ReservationService } from 'src/app/services/reservation/reservation.service';
-import { TimeSlotData } from 'src/app/models/time-slot.model';
+import { ReservationStatus, TimeSlotData } from 'src/app/models/time-slot.model';
 import { ReservationData } from 'src/app/models/reservation.model';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationComponent } from '../confirmation/confirmation.component';
@@ -207,9 +207,9 @@ export class ReservationsComponent {
                 date: this.chosenDate,
                 startTime: this.selectedTimeSlot.split(' - ')[0],
                 endTime: this.selectedTimeSlot.split(' - ')[1],
-                reserved: false
-            };
-
+                status: ReservationStatus.Pending, // Set the status using the enum value
+              };
+              console.log(timeSlotData)
 
             const dialogRef = this.dialog.open(ConfirmationComponent, {
                 width: '400px',

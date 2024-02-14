@@ -1,6 +1,12 @@
-export interface TimeSlotData {
+export enum ReservationStatus {
+    Reserved = 'RESERVED',
+    Pending = 'PENDING',
+    Canceled = 'CANCELED',
+  }
+  
+  export interface TimeSlotData {
     date: string | undefined;
     startTime: string | undefined;
     endTime: string | undefined;
-    reserved: boolean;
-}
+    status: ReservationStatus;
+  }
