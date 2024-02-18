@@ -45,7 +45,7 @@
           <ng-container matColumnDef="accept-decline">
             <th mat-header-cell *matHeaderCellDef class="column-cell"> </th>
             <td mat-cell *matCellDef="let element" class="column-cell">
-              <button mat-raised-button color="accent" id="acceptButton">Accept</button>
+              <button mat-raised-button color="accent" id="acceptButton" (click)="acceptReservation(element)">Accept</button>
               <button mat-raised-button color="warn">Decline</button>
             </td>
           </ng-container>
@@ -79,7 +79,7 @@
         </mat-card-header>
         
 
-        <table mat-table [dataSource]="dataSource" matSort class="table">
+        <table mat-table [dataSource]="dataSourceAccepted" matSort class="table">
             
             <!-- Name Column -->
             <ng-container matColumnDef="name">

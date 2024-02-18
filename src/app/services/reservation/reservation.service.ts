@@ -9,7 +9,7 @@ import { catchError, throwError } from 'rxjs';
   providedIn: 'root'
 })
 export class ReservationService {
- 
+  
   private baseUrl = 'http://localhost:8080/api/user';
   private adminUrl = 'http://localhost:8080/api/admin';
 
@@ -32,6 +32,8 @@ export class ReservationService {
     // Make GET request to backend endpoint
     return this.http.get<any>(`${this.baseUrl}/${roomId}/timeslots`, { params });
   }
+
+
 
   createReservation(reservationData: ReservationData, selectedTimeSlot: TimeSlotData): Observable<any> {
     const url = `${this.baseUrl}/reservations`;
@@ -59,4 +61,21 @@ export class ReservationService {
       })
     );
   }
-}
+
+  getAcceptedReservations(): Observable<ReservationDTO[]> {
+      const url = `${this.adminUrl}/reservations/accepted`;
+
+      return this.http.get<ReservationDTO[]>(url).pipe(
+        catchError((error) => {
+          console.error('Error fetching accepted reservations:', error);
+          // You can log the error or show a user-friendly message
+          return throwError('Failed to fetch accepted reservations. Please try again later.');
+        })
+      );
+    }
+
+    acceptReservation(reservationId: number): Observable<void> {
+      const url = `${this.adminUrl}/reservations/accept/${reservationId}`;
+      return this.http.put<void>(url, null);
+    }
+  }

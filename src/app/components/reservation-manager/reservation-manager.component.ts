@@ -23,62 +23,76 @@ export class ReservationManagerComponent implements AfterViewInit {
   displayedColumns: string[] = ['name', 'purpose', 'room', 'date', 'timeSlot', 'username', 'cancel'];
 
   dataSource: MatTableDataSource<ReservationDTO>;
+  dataSourceAccepted: MatTableDataSource<ReservationDTO>;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(private reservationService: ReservationService,  private roomService: RoomService  ) {
     this.dataSource = new MatTableDataSource<ReservationDTO>([]);
+    this.dataSourceAccepted = new MatTableDataSource<ReservationDTO>([]);
   }
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
     this.fetchPendingReservations();
+    this.fetchAcceptedReservations();
   }
 
   fetchPendingReservations() {
     this.reservationService.getPendingReservations().subscribe((reservations) => {
-
-      
-      // Fetch room names for each reservation
-      const roomNameRequests = reservations.map(reservation => this.roomService.getRoomNamesByIds(reservation.roomIds));
-  
-      // Use forkJoin to combine multiple observables into one
-      forkJoin(roomNameRequests).subscribe((roomNamesArray: string[][]) => {
-        // Update the dataSource with formatted data
-        const formattedReservations = reservations.map((reservation, index) => {
-          const startTime = reservation.startTime;
-          const endTime = reservation.endTime;
-          const timeSlot = `${startTime} : ${endTime}`;
-          
-          
-          // Assuming roomNamesArray[index] contains the room names for the current reservation
-          const roomNames = roomNamesArray[index].join(', ');
-          
-          return { ...reservation, timeSlot, roomNames };
-        });
-  
-        // Update the dataSource with formatted reservations
-        this.dataSource.data = formattedReservations;
-        
-        // Set paginator and sort
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
-        
-        console.log(formattedReservations);
-      });
+      this.updateDataSource(reservations, this.dataSource);
     });
   }
 
-  
-  
+  fetchAcceptedReservations() {
+    this.reservationService.getAcceptedReservations().subscribe((reservations) => {
+      console.log('Accepted Reservations:', reservations);
+      this.updateDataSource(reservations, this.dataSourceAccepted);
+    });
+  }
 
+  private updateDataSource(reservations: ReservationDTO[], dataSource: MatTableDataSource<ReservationDTO>) {
+    const roomNameRequests = reservations.map(reservation => this.roomService.getRoomNamesByIds(reservation.roomIds));
+    
+    forkJoin(roomNameRequests).subscribe((roomNamesArray: string[][]) => {
+      console.log('Room Names Array:', roomNamesArray);
+
+      const formattedReservations = reservations.map((reservation, index) => {
+        const startTime = reservation.startTime;
+        const endTime = reservation.endTime;
+        const timeSlot = `${startTime} : ${endTime}`;
+        
+        const roomNames = roomNamesArray[index].join(', ');
+        
+        return { ...reservation, timeSlot, roomNames };
+      });
+
+      dataSource.data = formattedReservations;
+
+      // Set paginator and sort
+      dataSource.paginator = this.paginator;
+      dataSource.sort = this.sort;
+
+      console.log(formattedReservations);
+    });
+  }
+  
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+  }
+
+  acceptReservation(reservation: any) {
+    console.log(reservation);
+
+    this.reservationService.acceptReservation(reservation.reservationId).subscribe(() => {
+      this.fetchAcceptedReservations(); // Refresh the active reservations table
+      this.fetchPendingReservations();
+    });
   }
 }
