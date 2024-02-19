@@ -10,6 +10,7 @@ import { catchError, throwError } from 'rxjs';
 })
 export class ReservationService {
   
+  
   private baseUrl = 'http://localhost:8080/api/user';
   private adminUrl = 'http://localhost:8080/api/admin';
 
@@ -58,6 +59,7 @@ export class ReservationService {
         console.error('Error fetching pending reservations:', error);
         // You can log the error or show a user-friendly message
         return throwError('Failed to fetch pending reservations. Please try again later.');
+        
       })
     );
   }
@@ -78,4 +80,8 @@ export class ReservationService {
       const url = `${this.adminUrl}/reservations/accept/${reservationId}`;
       return this.http.put<void>(url, null);
     }
+
+    declineReservation(reservationId: number): Observable<void> {
+      const url = `${this.adminUrl}/reservations/decline/${reservationId}`;
+      return this.http.put<void>(url, null);    }
   }
