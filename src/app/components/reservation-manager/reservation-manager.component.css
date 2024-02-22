@@ -26,11 +26,11 @@
 #acceptButton{
     margin-right: 30px;
     background-color: yellowgreen;
+    width: 30px;
 }
 
-
-#acceptButton {
-   background-color: yellowgreen;
+#declineButton{
+    width: 30px;
 }
 
 .column-cell {
@@ -44,3 +44,4 @@ mat-paginator{
 .mat-mdc-row:hover {
     background-color: rgba(124, 123, 124, 0.5); /* Adjust the background color for hover effect */
   }
+

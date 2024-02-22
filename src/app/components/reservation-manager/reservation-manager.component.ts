@@ -1,5 +1,5 @@
 import {AfterViewInit, ChangeDetectorRef, Component, OnChanges, OnInit, ViewChild} from '@angular/core';
-import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
+import {MatPaginator, MatPaginatorIntl, MatPaginatorModule} from '@angular/material/paginator';
 import {MatSort, MatSortModule} from '@angular/material/sort';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {MatInputModule} from '@angular/material/input';
@@ -20,7 +20,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './reservation-manager.component.html',
   styleUrl: './reservation-manager.component.css'
 })
-export class ReservationManagerComponent implements OnInit, AfterViewInit, OnChanges {
+export class ReservationManagerComponent implements AfterViewInit {
   displayedColumnsRequest: string[] = ['name', 'purpose', 'room', 'date', 'timeSlot', 'username', 'accept-decline'];
   displayedColumns: string[] = ['name', 'purpose', 'room', 'date', 'timeSlot', 'username', 'cancel'];
 
@@ -41,34 +41,44 @@ export class ReservationManagerComponent implements OnInit, AfterViewInit, OnCha
   ) {
     this.dataSourceRequested = new MatTableDataSource<ReservationDTO>([]);
     this.dataSourceAccepted = new MatTableDataSource<ReservationDTO>([]);
-    
+
+    this.paginatorRequest = new MatPaginator(new MatPaginatorIntl(), cdr); // Replace MatPaginatorIntl with your actual class if needed
+    this.paginatorAccepted = new MatPaginator(new MatPaginatorIntl(), cdr); // Replace MatPaginatorIntl with your actual class if needed
+
+      this.dataSourceRequested.paginator = this.paginatorRequest;
+      this.dataSourceAccepted.paginator = this.paginatorAccepted;
+      this.fetchData();
+
+
+   
+    console.log("poziv 1")
+
   }
 
-  ngOnInit(): void {
-    this.dataSourceRequested.paginator = this.paginatorRequest;
-    this.dataSourceAccepted.paginator = this.paginatorAccepted;
-
-    this.dataSourceRequested.sort = this.sortRequest;
-    this.dataSourceAccepted.sort = this.sortAccepted;
-  }
-
-  ngAfterViewInit(): void {
-
-    this.fetchData();
-  }
-
-  ngOnChanges(): void {
-    this.fetchData(); 
+  ngAfterViewInit() {
+    setTimeout(() => {
+      console.log("poziv 2");
+      this.cdr.detectChanges();
+      this.fetchData();
+    }, 100);
   }
 
 
+  fetchAcceptedReservations() {
+    this.reservationService.getAcceptedReservations().subscribe((reservations) => {
+
+      this.updateDataSource(reservations, this.dataSourceAccepted, this.paginatorAccepted, this.sortAccepted);
+      
+    });
+  }
   fetchData() {
     // Fetch both pending and accepted reservations
     const fetchPending$ = this.reservationService.getPendingReservations();
     const fetchAccepted$ = this.reservationService.getAcceptedReservations();
-
+    
     forkJoin([fetchPending$, fetchAccepted$]).subscribe(
       ([pendingReservations, acceptedReservations]) => {
+
         // Update data sources and set paginator and sort after fetching data
         this.updateDataSource(pendingReservations, this.dataSourceRequested, this.paginatorRequest, this.sortRequest);
         this.updateDataSource(acceptedReservations, this.dataSourceAccepted, this.paginatorAccepted, this.sortAccepted);
@@ -82,14 +92,12 @@ export class ReservationManagerComponent implements OnInit, AfterViewInit, OnCha
   fetchPendingReservations() {
     this.reservationService.getPendingReservations().subscribe((reservations) => {
       this.updateDataSource(reservations, this.dataSourceRequested, this.paginatorRequest, this.sortRequest);
+      console.log("Pending Reservations:", reservations);
+      console.log("Data Source Requested Length:", this.dataSourceRequested.data.length);
     });
   }
 
-  fetchAcceptedReservations() {
-    this.reservationService.getAcceptedReservations().subscribe((reservations) => {
-      this.updateDataSource(reservations, this.dataSourceAccepted, this.paginatorAccepted, this.sortAccepted);
-    });
-  }
+
 
   private updateDataSource(
     reservations: ReservationDTO[],
@@ -97,28 +105,31 @@ export class ReservationManagerComponent implements OnInit, AfterViewInit, OnCha
     paginator: MatPaginator,
     sort: MatSort
   ) {
+    if (!reservations || reservations.length === 0) {
+      dataSource.data = [];
+      dataSource.paginator = paginator;
+      dataSource.sort = sort;
+      return;
+    }
+  
     const roomNameRequests = reservations.map(reservation => this.roomService.getRoomNamesByIds(reservation.roomIds));
-
+  
     forkJoin(roomNameRequests).subscribe((roomNamesArray: string[][]) => {
-      console.log('Room Names Array:', roomNamesArray);
-     
       const formattedReservations = reservations.map((reservation, index) => {
         const startTime = reservation.startTime;
         const endTime = reservation.endTime;
         const timeSlot = `${startTime} - ${endTime}`;
         const roomNames = roomNamesArray[index].join(', ');
-        console.log(roomNames);
-
+  
         return { ...reservation, timeSlot, roomNames };
       });
-     
+  
       dataSource.data = formattedReservations;
-
+  
       // Reset paginator to the first page
-      
       dataSource.paginator = paginator;
       dataSource.sort = sort;
-
+  
       // Ensure the paginator starts at the first page
       if (dataSource.paginator) {
         dataSource.paginator.firstPage();
@@ -145,7 +156,6 @@ export class ReservationManagerComponent implements OnInit, AfterViewInit, OnCha
   }
 
   acceptReservation(reservation: any) {
-    console.log(reservation);
     this.reservationService.acceptReservation(reservation.reservationId).subscribe(() => {
       this.notificationService.getMessage(reservation.name + ' has been successfully reserved.');
       this.fetchPendingReservations();
@@ -154,13 +164,12 @@ export class ReservationManagerComponent implements OnInit, AfterViewInit, OnCha
   }
 
   declineReservation(reservation: any) {
-    console.log('declined from accepted' + reservation.name);
-    console.log(this.dataSourceRequested.data);
     this.reservationService.declineReservation(reservation.reservationId).subscribe(() => {
-      this.fetchAcceptedReservations(); // Refresh the active reservations table
       this.fetchPendingReservations();
+      this.fetchAcceptedReservations();
+      console.log('decline: ' +reservation);
+
       this.notificationService.getMessage(reservation.name + ' has been canceled.');
-      console.log(this.dataSourceRequested.data);
     });
   }
 }
