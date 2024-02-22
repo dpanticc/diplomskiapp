@@ -1,34 +1,124 @@
   <mat-stepper labelPosition="bottom" linear="true" #stepper class="stepper" orientation="vertical">
     <mat-step [stepControl]="firstFormGroup">
       <div class="step-container">
+        <form [formGroup]="firstFormGroup" class="formGroups">
+          <ng-template matStepLabel>
+            Enter purpuse and details for your reservation:
+            <span [class.chosen]="name">{{ name }}</span>
+            <span *ngIf="chosenPurpose" [class.chosen]="chosenPurpose"> - {{ chosenPurpose }}</span>
+          </ng-template>
+    
+          <mat-form-field class="example-full-width">
+            <mat-label>Name</mat-label>
+            <input matInput [formControl]="nameFormControl">
+    
+            <mat-error *ngIf="nameFormControl.hasError('required')">Name is <strong>required</strong></mat-error>
+          </mat-form-field>
+    
+          <mat-form-field class="example-full-width">
+            <mat-label>Reservation purpose</mat-label>
+            <mat-select formControlName="purpose" placeholder="Pick one" (selectionChange)="onPurposeChange($event.value); onThirdStepEntered()">
+              <mat-option class="options" *ngFor="let purpose of reservationPurposes" [value]="purpose">
+                {{ purpose }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+    
+          <!-- Additional fields for Lecture or Exam -->
+          <div *ngIf="firstFormGroup.get('purpose')?.value === 'Class' || firstFormGroup.get('purpose')?.value === 'Exam'">
+            <mat-form-field class="example-full-width" *ngIf="firstFormGroup.get('purpose')?.value === 'Class'">
+              <mat-label>Type of Class</mat-label>
+              <mat-select formControlName="typeOfClass">
+                <mat-option value="Lecture">Lecture</mat-option>
+                <mat-option value="Exercise">Exercise</mat-option>
+              </mat-select>
+            </mat-form-field>
+    
+            <mat-form-field class="example-full-width">
+              <mat-label>Semester</mat-label>
+              <mat-select formControlName="semester">
+                <mat-option value="Lecture">First</mat-option>
+                <mat-option value="Exercise">Second</mat-option>
+              </mat-select>
+            </mat-form-field>
+    
+            <mat-form-field class="example-full-width">
+              <mat-label>Study Level</mat-label>
+              <mat-select formControlName="studyLevel">
+                <mat-option value="OAS">OAS</mat-option>
+                <mat-option value="MAS">MAS</mat-option>
+                <mat-option value="SAS">SAS</mat-option>
+                <mat-option value="DAS">DAS</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
 
-    <form [formGroup]="firstFormGroup" class="formGroups">
-      <ng-template matStepLabel> 
-        Enter name and purpose for your reservation: 
-        <span [class.chosen]="name">{{ name }}</span> 
-        <span *ngIf="chosenPurpose" [class.chosen]="chosenPurpose"> - {{ chosenPurpose }}</span>
-      </ng-template>
-      <mat-form-field class="example-full-width">
-        <mat-label>Name</mat-label>
-        <input matInput [formControl]="nameFormControl">
-        
-        <mat-error *ngIf="nameFormControl.hasError('required')">Name is <strong>required</strong>
-        </mat-error>
-      </mat-form-field>
-      <mat-form-field class="example-full-width">
-        <mat-label>Reservation purpose</mat-label>
-        <mat-select formControlName="purpose" placeholder="Pick one" (selectionChange)="onPurposeChange($event.value); onThirdStepEntered()">
-          <mat-option class="options" *ngFor="let purpose of reservationPurposes" [value]="purpose">
-            {{ purpose }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      <div class="buttons">
-        <button mat-button matStepperNext class="nextButton" [disabled]="!firstFormGroup.valid">Next</button>
+          <div *ngIf="firstFormGroup.value.purpose === 'Thesis Defense'">
+            <mat-form-field class="example-full-width">
+              <mat-label>Title of Thesis</mat-label>
+              <input matInput formControlName="thesisTitle">
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width">
+              <mat-label>Thesis Level</mat-label>
+              <mat-select formControlName="studyLevelThesis">
+                <mat-option value="OAS">OAS</mat-option>
+                <mat-option value="MAS">MAS</mat-option>
+                <mat-option value="SAS">SAS</mat-option>
+                <mat-option value="DAS">DAS</mat-option>
+              </mat-select>
+            </mat-form-field>
+           
+            <mat-form-field class="example-full-width">
+              <mat-label>Supervisor</mat-label>
+              <input matInput formControlName="supervisor">
+            </mat-form-field>
+            <mat-form-field class="example-full-width">
+              <mat-label>Committee Members</mat-label>
+              <input matInput formControlName="committeeMembers">
+            </mat-form-field>
+          </div>
+
+          <div *ngIf="firstFormGroup.value.purpose === 'Student Org. Project'">
+            <mat-form-field class="example-full-width">
+              <mat-label>Project Name</mat-label>
+              <input matInput formControlName="projectName">
+            </mat-form-field>
+            <mat-form-field class="example-full-width">
+              <mat-label>Student Organization</mat-label>
+              <mat-select formControlName="studentOrganization">
+                <mat-option value="AIESEC">AIESEC</mat-option>
+                <mat-option value="Savez studenata FON">Savez studenata FON</mat-option>
+                <mat-option value="ЕSTIEM LG Belgrade">ЕSTIEM LG Belgrade</mat-option>
+                <mat-option value="FONIS">FONIS</mat-option>
+                <mat-option value="Case Study Club BCA">Case Study Club BCA</mat-option>
+                <mat-option value="Bufonerija">Bufonerija</mat-option>
+                <mat-option value="Debatni klub">Debatni klub</mat-option>
+                <mat-option value="EkoFON">EkoFON</mat-option>
+                <mat-option value="Quality Media Station">Quality Media Station</mat-option>
+                <mat-option value="SportFON">SportFON</mat-option>
+                <mat-option value="SAFON">SAFON</mat-option>
+                <mat-option value="Unija studenata FON-a">Unija studenata FON-a</mat-option>
+                <mat-option value="FON-ov centar za razvoj karijere">FON-ov centar za razvoj karijere</mat-option>
+              </mat-select>
+            </mat-form-field>
+            
+            <div>
+            <mat-form-field class="example-full-width">
+              <mat-label>Project Description</mat-label>
+              <textarea matInput formControlName="projectDescription"></textarea>
+            </mat-form-field>
+          </div>
+          </div>
+
+          
+    
+          <div class="buttons">
+            <button mat-button matStepperNext class="nextButton" [disabled]="!firstFormGroup.valid">Next</button>
+          </div>
+        </form>
       </div>
-    </form>
-    </div>
-  </mat-step>
+    </mat-step>
   <mat-step [stepControl]="secondFormGroup" >
     <form [formGroup]="secondFormGroup" class="formGroups">
         <ng-template matStepLabel>

@@ -45,7 +45,7 @@ export class ReservationService {
       timeSlotDTO: selectedTimeSlot
     };
 
-    console.log(selectedTimeSlot.status)
+    console.log(reservationData);
 
     // Make the HTTP POST request with the wrapper object as the request body
     return this.http.post(url, ReservationTimeSlotDTO);
@@ -53,7 +53,7 @@ export class ReservationService {
 
   getPendingReservations(): Observable<ReservationDTO[]> {
     const url = `${this.adminUrl}/reservations/pending`;
-  
+
     return this.http.get<ReservationDTO[]>(url).pipe(
       catchError((error) => {
         console.error('Error fetching pending reservations:', error);

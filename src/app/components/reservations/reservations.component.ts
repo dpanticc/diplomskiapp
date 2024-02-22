@@ -60,7 +60,7 @@ export class ReservationsComponent {
   @ViewChild('stepper') stepper!: MatStepper; 
 
   myControl = new FormControl('');
-  reservationPurposes: string[] = ['Lecture', 'Exam', 'Public Meeting', 'Internal Meeting', 'Conference'];
+  reservationPurposes: string[] = ['Class', 'Exam', 'Thesis Defense', 'Student Org. Project'];
   filteredOptions: string[] | undefined;
   selectedDate: Date | null = null; 
 
@@ -94,7 +94,17 @@ export class ReservationsComponent {
 
     this.firstFormGroup = this._formBuilder.group({
       purpose: ['', Validators.required],
-      name: this.nameFormControl
+      name: this.nameFormControl,
+      typeOfClass: [''],
+      semester: [''],
+      studyLevel: [''],
+      thesisTitle: [''],
+      studyLevelThesis: [''],
+      supervisor: [''],
+      committeeMembers: [''],
+      projectName: [''],
+      studentOrganization: [''],
+      projectDescription: [''],
     });
 
     this.secondFormGroup = this._formBuilder.group({
@@ -197,11 +207,19 @@ export class ReservationsComponent {
             const roomIds: number[] = this.selectedRooms.map(room => room.roomId);
 
             const reservationData: ReservationData = {
-                name: this.name,
-                purpose: this.chosenPurpose,
-                roomIds: roomIds,
-                username: localStorage.getItem('username') || '' // Ensure that the return type of getItem matches string | null
-            };
+              name: this.firstFormGroup.get('name')?.value,
+              purpose: this.firstFormGroup.get('purpose')?.value,
+              roomIds: roomIds,
+              username: localStorage.getItem('username') || '',
+              subjectName: this.firstFormGroup.get('typeOfClass')?.value,
+              semester: this.firstFormGroup.get('semester')?.value,
+              lessonType: this.firstFormGroup.get('typeOfClass')?.value, // Adjust this based on your form structure
+              studyLevel: this.firstFormGroup.get('studyLevel')?.value,
+              thesisDetails: this.firstFormGroup.get('thesisTitle')?.value,
+              projectOrganization: this.firstFormGroup.get('studentOrganization')?.value, // Adjust this based on your form structure
+              projectName: this.firstFormGroup.get('projectName')?.value,
+              projectDescription: this.firstFormGroup.get('projectDescription')?.value
+          };
 
             const timeSlotData: TimeSlotData = {
                 date: this.chosenDate,
