@@ -33,6 +33,7 @@
       }
     }
 
+    
     clearSelectedRooms() {
       this.selection.clear();
       this.emitSelectedRooms();

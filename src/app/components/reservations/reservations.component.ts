@@ -98,13 +98,14 @@ export class ReservationsComponent {
       typeOfClass: [''],
       semester: [''],
       studyLevel: [''],
-      thesisTitle: [''],
       studyLevelThesis: [''],
       supervisor: [''],
       committeeMembers: [''],
       projectName: [''],
       studentOrganization: [''],
       projectDescription: [''],
+      thesisSupervisor: [''],
+      thesisCommitteeMembers: [''],
     });
 
     this.secondFormGroup = this._formBuilder.group({
@@ -132,6 +133,29 @@ export class ReservationsComponent {
   onPurposeChange(purpose: string) {
     this.chosenPurpose = purpose;
     
+    if (this.chosenPurpose !== 'Class') {
+      this.firstFormGroup.get('typeOfClass')?.reset('');
+      this.firstFormGroup.get('semester')?.reset('');
+      this.firstFormGroup.get('studyLevel')?.reset('');
+    }
+
+    if (this.chosenPurpose !== 'Exam') {
+      this.firstFormGroup.get('semester')?.reset('');
+      this.firstFormGroup.get('studyLevel')?.reset('');
+    }
+  
+  
+    if (this.chosenPurpose !== 'Thesis Defense') {
+      this.firstFormGroup.get('studyLevelThesis')?.reset('');
+      this.firstFormGroup.get('supervisor')?.reset('');
+      this.firstFormGroup.get('committeeMembers')?.reset('');
+    }
+  
+    if (this.chosenPurpose !== 'Student Org. Project') {
+      this.firstFormGroup.get('projectName')?.reset('');
+      this.firstFormGroup.get('studentOrganization')?.reset('');
+      this.firstFormGroup.get('projectDescription')?.reset('');
+    }
   }
   
   onDateChange(event: MatDatepickerInputEvent<Date>) {
@@ -211,11 +235,11 @@ export class ReservationsComponent {
               purpose: this.firstFormGroup.get('purpose')?.value,
               roomIds: roomIds,
               username: localStorage.getItem('username') || '',
-              subjectName: this.firstFormGroup.get('typeOfClass')?.value,
               semester: this.firstFormGroup.get('semester')?.value,
               lessonType: this.firstFormGroup.get('typeOfClass')?.value, // Adjust this based on your form structure
               studyLevel: this.firstFormGroup.get('studyLevel')?.value,
-              thesisDetails: this.firstFormGroup.get('thesisTitle')?.value,
+              thesisSupervisor : this.firstFormGroup.get('thesisSupervisor')?.value,
+              thesisCommitteeMembers: this.firstFormGroup.get('thesisCommitteeMembers')?.value,
               projectOrganization: this.firstFormGroup.get('studentOrganization')?.value, // Adjust this based on your form structure
               projectName: this.firstFormGroup.get('projectName')?.value,
               projectDescription: this.firstFormGroup.get('projectDescription')?.value
@@ -255,6 +279,7 @@ export class ReservationsComponent {
         console.error('An error occurred:', error);
     }
 }
+
 
   onReset() {
     // Reset form groups
