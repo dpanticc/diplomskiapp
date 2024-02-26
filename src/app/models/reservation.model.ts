@@ -4,7 +4,7 @@ export interface ReservationData {
     name: string | null | undefined;
     purpose: string | undefined;
     semester: string | undefined;
-    lessonType: string | undefined;
+    typeOfClass: string | undefined;
     studyLevel: string | undefined;
     projectOrganization: string | undefined;
     thesisSupervisor: string | undefined;

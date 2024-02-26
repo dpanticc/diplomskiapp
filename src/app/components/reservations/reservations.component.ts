@@ -236,7 +236,7 @@ export class ReservationsComponent {
               roomIds: roomIds,
               username: localStorage.getItem('username') || '',
               semester: this.firstFormGroup.get('semester')?.value,
-              lessonType: this.firstFormGroup.get('typeOfClass')?.value, // Adjust this based on your form structure
+              typeOfClass: this.firstFormGroup.get('typeOfClass')?.value, // Adjust this based on your form structure
               studyLevel: this.firstFormGroup.get('studyLevel')?.value,
               thesisSupervisor : this.firstFormGroup.get('thesisSupervisor')?.value,
               thesisCommitteeMembers: this.firstFormGroup.get('thesisCommitteeMembers')?.value,
