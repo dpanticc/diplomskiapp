@@ -13,4 +13,5 @@ export interface ReservationData {
     projectDescription: string | undefined;
     roomIds: number[] | undefined; // Change to array of room IDs
     username: string | null | undefined;
+    theme: string | undefined;
 }

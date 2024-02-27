@@ -41,7 +41,7 @@
                 <mat-option value="Second">Second</mat-option>
               </mat-select>
             </mat-form-field>
-    
+
             <mat-form-field class="example-full-width">
               <mat-label>Study Level</mat-label>
               <mat-select formControlName="studyLevel">
@@ -54,7 +54,11 @@
           </div>
 
           <div *ngIf="firstFormGroup.value.purpose === 'Thesis Defense'">
-            
+
+            <mat-form-field class="example-full-width">
+              <mat-label>Thesis theme</mat-label>
+              <input matInput formControlName="theme">
+            </mat-form-field>
 
             <mat-form-field class="example-full-width">
               <mat-label>Thesis Level</mat-label>
@@ -109,8 +113,6 @@
           </div>
           </div>
 
-          
-    
           <div class="buttons">
             <button mat-button matStepperNext class="nextButton" [disabled]="!firstFormGroup.valid">Next</button>
           </div>
@@ -120,7 +122,7 @@
   <mat-step [stepControl]="secondFormGroup" >
     <form [formGroup]="secondFormGroup" class="formGroups">
         <ng-template matStepLabel>
-          Select date for your reservation: 
+          Select date and time for your reservation: 
           <span [class.chosen]="chosenDate">{{ chosenDate }}</span>
         </ng-template>
         <mat-form-field class="example-full-width">
@@ -129,6 +131,19 @@
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
+
+      <mat-form-field class="example-full-width">
+        <mat-label>Start Time</mat-label>
+        <input matInput [matTimepicker]="startTimePicker" formControlName="startTime" placeholder="HH:mm">
+        <mat-timepicker #startTimePicker></mat-timepicker>
+      </mat-form-field>
+  
+      <mat-form-field class="example-full-width">
+        <mat-label>End Time</mat-label>
+        <input matInput [matTimepicker]="endTimePicker" formControlName="endTime" placeholder="HH:mm">
+        <mat-timepicker #endTimePicker></mat-timepicker>
+      </mat-form-field>
+      
       <!-- Add a null check before accessing hasError method -->
       <div class="buttons">
         <button mat-button matStepperPrevious class="buttonBack">Back</button>
@@ -157,21 +172,7 @@
       </div>
     </form>
   </mat-step>
-  <mat-step [stepControl]="fourthFormGroup" [editable]="!roomSelected">
-    <form [formGroup]="fourthFormGroup" class="formGroups">
-      <ng-template matStepLabel>Pick a free time slot
-        <span [class.chosen]="chosenDate">{{ selectedTimeSlot }}</span>
 
-      </ng-template>
-      <mat-chip-listbox aria-label="Timeslot selection">
-        <mat-chip-option [disabled]="isTimeSlotReserved(timeSlot)"  *ngFor="let timeSlot of timeSlots" (click)="onTimeSlotSelected(timeSlot)" [selected]="selectedTimeSlot === timeSlot">{{ timeSlot }}</mat-chip-option>
-      </mat-chip-listbox>
-      <div class="buttons">
-        <button mat-button matStepperPrevious class="buttonBack">Back</button>
-        <button mat-button class="nextButton" [disabled]="!isSelectedTimeSlot" (click)="onFinishButtonClick()">Finish</button>
-      </div>
-    </form>
-  </mat-step>
   <mat-step>
     <ng-template matStepLabel>Done</ng-template>
     <p>Your request has been sent to the admin. You will be informed if the reservation is confirmed by your email!</p>

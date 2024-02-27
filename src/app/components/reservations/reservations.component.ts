@@ -45,7 +45,9 @@ function roomSelectedValidator(roomSelected: boolean): ValidatorFn {
     MatSelectModule,
     CommonModule,
     MatChipsModule,
-    MatCardModule
+    MatCardModule,
+    MatDatepickerModule
+    
 
   ],
   templateUrl: './reservations.component.html',
@@ -67,7 +69,6 @@ export class ReservationsComponent {
   firstFormGroup: FormGroup ;
   secondFormGroup: FormGroup ;
   thirdFormGroup: FormGroup ;
-  fourthFormGroup: FormGroup ;
 
   chosenPurpose: string | undefined;
   chosenDate: string | undefined;
@@ -78,7 +79,6 @@ export class ReservationsComponent {
 
   nameFormControl = new FormControl('', [Validators.required]);
   name: string | null | undefined;
-  timeSlots: string[] = ['08:00 - 10:00', '10:00 - 12:00', '12:00 - 14:00', '14:00 - 16:00', '16:00 - 18:00', '18:00 - 20:00'];
 
   selectedTimeSlot: string | undefined;
 
@@ -106,20 +106,19 @@ export class ReservationsComponent {
       projectDescription: [''],
       thesisSupervisor: [''],
       thesisCommitteeMembers: [''],
+      theme: ['']
     });
 
     this.secondFormGroup = this._formBuilder.group({
-      date: ['', [Validators.required, DateValidator.futureDateValidator()]] // Apply the custom validator
-    });
+      date: ['', [Validators.required, DateValidator.futureDateValidator()]],
+      startTime: [null, [Validators.required, this.validateTime]],
+      endTime: [null, [Validators.required, this.validateTime]],
+  });
 
     this.thirdFormGroup = this._formBuilder.group({
     });
 
     this.updateRoomSelectedValidator();
-
-
-    this.fourthFormGroup = this._formBuilder.group({
-    });
     
     this.nameFormControl.valueChanges.subscribe((value: string | null) => {
       if (value !== null) { 
@@ -127,6 +126,13 @@ export class ReservationsComponent {
       }
     });
     
+  }
+
+  validateTime(control: AbstractControl): ValidationErrors | null {
+    const timeRegex = /^(0[8-9]|1[0-9]|20):00$/; // Matches HH:00 between 08:00 and 20:00
+    const isValid = timeRegex.test(control.value);
+  
+    return isValid ? null : { invalidTimeFormat: true };
   }
  
  
@@ -149,6 +155,7 @@ export class ReservationsComponent {
       this.firstFormGroup.get('studyLevelThesis')?.reset('');
       this.firstFormGroup.get('supervisor')?.reset('');
       this.firstFormGroup.get('committeeMembers')?.reset('');
+      this.firstFormGroup.get('theme')?.reset('');
     }
   
     if (this.chosenPurpose !== 'Student Org. Project') {
@@ -214,15 +221,6 @@ export class ReservationsComponent {
     }
   }
 
-  onTimeSlotSelected(timeSlot: string) {
-    if (this.selectedTimeSlot === timeSlot) {
-      this.selectedTimeSlot = undefined;
-      this.isSelectedTimeSlot = false;
-    } else {
-      this.selectedTimeSlot = timeSlot;
-      this.isSelectedTimeSlot = true;
-    }
-  }
 
   onFinishButtonClick() {
     try {
@@ -234,13 +232,14 @@ export class ReservationsComponent {
               name: this.firstFormGroup.get('name')?.value,
               purpose: this.firstFormGroup.get('purpose')?.value,
               roomIds: roomIds,
+              theme: this.firstFormGroup.get('theme')?.value,
               username: localStorage.getItem('username') || '',
               semester: this.firstFormGroup.get('semester')?.value,
-              typeOfClass: this.firstFormGroup.get('typeOfClass')?.value, // Adjust this based on your form structure
+              typeOfClass: this.firstFormGroup.get('typeOfClass')?.value,
               studyLevel: this.firstFormGroup.get('studyLevel')?.value,
               thesisSupervisor : this.firstFormGroup.get('thesisSupervisor')?.value,
               thesisCommitteeMembers: this.firstFormGroup.get('thesisCommitteeMembers')?.value,
-              projectOrganization: this.firstFormGroup.get('studentOrganization')?.value, // Adjust this based on your form structure
+              projectOrganization: this.firstFormGroup.get('studentOrganization')?.value,
               projectName: this.firstFormGroup.get('projectName')?.value,
               projectDescription: this.firstFormGroup.get('projectDescription')?.value
           };
@@ -286,7 +285,6 @@ export class ReservationsComponent {
     this.firstFormGroup.reset();
     this.secondFormGroup.reset();
     this.thirdFormGroup.reset();
-    this.fourthFormGroup.reset();
     
     // Clear component properties
     this.nameFormControl.reset(); // Reset the form control for the name

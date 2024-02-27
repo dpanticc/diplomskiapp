@@ -9,6 +9,7 @@ export interface ReservationDTO {
     startTime: string | undefined;
     endTime: string | undefined;
     status: ReservationStatus;
+    theme: string | undefined;
     room?: string; // Add the room property as an optional string
     timeSlot?: string; // Add the timeSlot property as an optional string
   }
