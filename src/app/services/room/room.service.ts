@@ -6,8 +6,6 @@ import { Observable, catchError, forkJoin, map, of, throwError } from 'rxjs';
   providedIn: 'root',
 })
 export class RoomService {
- 
- 
 
   private apiUrl = 'http://localhost:8080/api/admin/rooms';
   private userUrl = 'http://localhost:8080/api/user/rooms';
@@ -35,6 +33,14 @@ export class RoomService {
   deleteRoom(roomId: number) {
     return this.http.delete<void>(`${this.apiUrl}/${roomId}`);
   }
+
+  getAvailableRooms(date: string, startTime: string, endTime: string): Observable<Room[]> {
+    const url = `${this.userUrl}/available`;
+    const params = { date, startTime, endTime };
+
+    return this.http.get<Room[]>(url, { params });
+  }
+
 
   
   getRoomNamesByIds(roomIds: number[] | undefined): Observable<string[]> {

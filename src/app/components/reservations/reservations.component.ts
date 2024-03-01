@@ -19,7 +19,9 @@ import { ReservationStatus, TimeSlotData } from 'src/app/models/time-slot.model'
 import { ReservationData } from 'src/app/models/reservation.model';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationComponent } from '../confirmation/confirmation.component';
- 
+import { NgxMatTimepickerComponent, NgxMatTimepickerFieldComponent } from 'ngx-mat-timepicker';
+import { MatIconModule } from '@angular/material/icon';
+
 function roomSelectedValidator(roomSelected: boolean): ValidatorFn {
   return (control: AbstractControl): {[key: string]: any} | null => {
     if (!roomSelected) {
@@ -46,9 +48,7 @@ function roomSelectedValidator(roomSelected: boolean): ValidatorFn {
     CommonModule,
     MatChipsModule,
     MatCardModule,
-    MatDatepickerModule
-    
-
+    MatIconModule,
   ],
   templateUrl: './reservations.component.html',
   styleUrls: ['./reservations.component.css'],
@@ -65,6 +65,11 @@ export class ReservationsComponent {
   reservationPurposes: string[] = ['Class', 'Exam', 'Thesis Defense', 'Student Org. Project'];
   filteredOptions: string[] | undefined;
   selectedDate: Date | null = null; 
+
+  startTimeOptions: string[] = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'];
+  endTimeOptions: string[] = [];
+  chosenStartTime: string | undefined;
+  chosenEndTime: string | undefined = '';
 
   firstFormGroup: FormGroup ;
   secondFormGroup: FormGroup ;
@@ -111,9 +116,9 @@ export class ReservationsComponent {
 
     this.secondFormGroup = this._formBuilder.group({
       date: ['', [Validators.required, DateValidator.futureDateValidator()]],
-      startTime: [null, [Validators.required, this.validateTime]],
-      endTime: [null, [Validators.required, this.validateTime]],
-  });
+      startTime: ['', [Validators.required]],   
+      endTime: ['', [Validators.required]],    
+    });
 
     this.thirdFormGroup = this._formBuilder.group({
     });
@@ -128,11 +133,17 @@ export class ReservationsComponent {
     
   }
 
-  validateTime(control: AbstractControl): ValidationErrors | null {
-    const timeRegex = /^(0[8-9]|1[0-9]|20):00$/; // Matches HH:00 between 08:00 and 20:00
-    const isValid = timeRegex.test(control.value);
+
+  onEndTimeChange(selectedEndTime: string) {
+    this.chosenEndTime = selectedEndTime;
+  }
   
-    return isValid ? null : { invalidTimeFormat: true };
+  onStartTimeChange(selectedStartTime: string): void {
+    // Update the options for End Time based on the selected Start Time
+    const selectedIndex = this.startTimeOptions.indexOf(selectedStartTime);
+    this.endTimeOptions = this.startTimeOptions.slice(selectedIndex + 1);
+    this.secondFormGroup.get('endTime')?.setValue(null); // Reset the selected End Time
+    this.chosenStartTime = selectedStartTime; // Set chosenTime when Start Time changes
   }
  
  
@@ -163,6 +174,50 @@ export class ReservationsComponent {
       this.firstFormGroup.get('studentOrganization')?.reset('');
       this.firstFormGroup.get('projectDescription')?.reset('');
     }
+    Object.keys(this.firstFormGroup.controls).forEach(controlName => {
+      const control = this.firstFormGroup.get(controlName);
+      if (control) {
+        control.clearValidators();
+      }
+    });
+  
+    // Apply new validators based on the selected purpose
+    switch (this.chosenPurpose) {
+      case 'Class':
+        this.firstFormGroup.get('name')?.setValidators([Validators.required]);
+        this.firstFormGroup.get('typeOfClass')?.setValidators([Validators.required]);
+        this.firstFormGroup.get('semester')?.setValidators([Validators.required]);
+        this.firstFormGroup.get('studyLevel')?.setValidators([Validators.required]);
+        break;
+      case 'Exam':
+        this.firstFormGroup.get('name')?.setValidators([Validators.required]);
+        this.firstFormGroup.get('semester')?.setValidators([Validators.required]);
+        this.firstFormGroup.get('studyLevel')?.setValidators([Validators.required]);
+        break;
+      case 'Thesis Defense':
+        this.firstFormGroup.get('name')?.setValidators([Validators.required]);
+        this.firstFormGroup.get('theme')?.setValidators([Validators.required]);
+        this.firstFormGroup.get('studyLevel')?.setValidators([Validators.required]);
+        this.firstFormGroup.get('thesisSupervisor')?.setValidators([Validators.required]);
+        this.firstFormGroup.get('thesisCommitteeMembers')?.setValidators([Validators.required]);
+        break;
+      case 'Student Org. Project':
+        this.firstFormGroup.get('name')?.setValidators([Validators.required]);
+        this.firstFormGroup.get('projectName')?.setValidators([Validators.required]);
+        this.firstFormGroup.get('studentOrganization')?.setValidators([Validators.required]);
+        this.firstFormGroup.get('projectDescription')?.setValidators([Validators.required]);
+        break;
+      default:
+        // Handle other cases or leave it empty if no specific validation is needed
+    }
+  
+    // Update the form controls with the new validators
+    Object.keys(this.firstFormGroup.controls).forEach(controlName => {
+      const control = this.firstFormGroup.get(controlName);
+      if (control) {
+        control.updateValueAndValidity();
+      }
+    });
   }
   
   onDateChange(event: MatDatepickerInputEvent<Date>) {
@@ -197,34 +252,42 @@ export class ReservationsComponent {
   isTimeSlotReserved(timeSlot: string): boolean {
     return this.reservedTimeSlots.includes(timeSlot);
   }
+
+  
+  
   
   onNextButtonClick() {
-    if (this.selectedRooms.length > 0 && this.chosenDate) {
-      const selectedDateStr = this.chosenDate.toString();
-      this.reservedTimeSlots = []; // Clear reserved time slots before fetching new ones
+    if (this.chosenDate && this.chosenEndTime && this.chosenStartTime) {
+      const selectedDate = new Date(this.chosenDate);
   
-      this.selectedRooms.forEach(room => {
-        this.reservationService.getReservedTimeSlots(room.roomId, selectedDateStr).subscribe((reservedTimeSlots: any[]) => {
-          const convertedSlots = reservedTimeSlots.map(slot => {
-            return slot.startTime.split(':')[0] + ':00 - ' + slot.endTime.split(':')[0] + ':00';
-          });
-          this.reservedTimeSlots.push(...convertedSlots);
-          
+      // Format date in 'yyyy-MM-dd'
+      const formattedDate = this.formatDate(selectedDate);
+      console.log(formattedDate);
+      const startTime = this.chosenStartTime;
+      const endTime = this.chosenEndTime;
   
-          // Check if this is the last room before updating the reserved time slots
-          if (room === this.selectedRooms[this.selectedRooms.length - 1]) {
-            // After fetching all reserved time slots, navigate to the next step
-            }
+      this.roomService.getAvailableRooms(formattedDate, startTime, endTime)
+        .subscribe((availableRooms: Room[]) => {
+          // Now, availableRooms contains rooms that are not reserved during the specified time
+          console.log('Available Rooms:', availableRooms);
+          this.rooms = availableRooms;
+          // You can use this data as needed in your application
         });
-      });
-      
     }
-  }
+}
+
+// Add this method to your component class
+private formatDate(date: Date): string {
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
 
 
   onFinishButtonClick() {
     try {
-        if (this.selectedTimeSlot) {
+        if (this.chosenDate && this.chosenEndTime && this.chosenStartTime) {
 
             const roomIds: number[] = this.selectedRooms.map(room => room.roomId);
 
@@ -246,8 +309,8 @@ export class ReservationsComponent {
 
             const timeSlotData: TimeSlotData = {
                 date: this.chosenDate,
-                startTime: this.selectedTimeSlot.split(' - ')[0],
-                endTime: this.selectedTimeSlot.split(' - ')[1],
+                startTime: this.chosenStartTime,
+                endTime: this.chosenEndTime,
                 status: ReservationStatus.Pending, // Set the status using the enum value
               };
               console.log(timeSlotData)
