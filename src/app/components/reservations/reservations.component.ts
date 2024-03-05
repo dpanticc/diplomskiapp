@@ -19,7 +19,6 @@ import { ReservationStatus, TimeSlotData } from 'src/app/models/time-slot.model'
 import { ReservationData } from 'src/app/models/reservation.model';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationComponent } from '../confirmation/confirmation.component';
-import { NgxMatTimepickerComponent, NgxMatTimepickerFieldComponent } from 'ngx-mat-timepicker';
 import { MatIconModule } from '@angular/material/icon';
 
 function roomSelectedValidator(roomSelected: boolean): ValidatorFn {
