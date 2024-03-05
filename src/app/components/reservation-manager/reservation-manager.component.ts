@@ -12,13 +12,16 @@ import { RoomService } from 'src/app/services/room/room.service';
 import { forkJoin, timeout } from 'rxjs';
 import { NotificationService } from 'src/app/services/notification/notification.service';
 import { CommonModule } from '@angular/common';
+import { MAT_DATE_FORMATS } from '@angular/material/core';
+import { MY_DATE_FORMATS } from '../reservations/custom.date.adapter';
 
 @Component({
   selector: 'app-reservation-manager',
   standalone: true,
   imports: [MatFormFieldModule, MatInputModule, MatTableModule, MatSortModule, MatPaginatorModule, MatCardModule, MatButtonModule, CommonModule],
   templateUrl: './reservation-manager.component.html',
-  styleUrl: './reservation-manager.component.css'
+  styleUrl: './reservation-manager.component.css',
+  providers: [{provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS}]
 })
 export class ReservationManagerComponent implements AfterViewInit {
   displayedColumnsRequest: string[] = ['name', 'purpose', 'room', 'date', 'timeSlot', 'username', 'accept-decline'];
@@ -98,6 +101,14 @@ export class ReservationManagerComponent implements AfterViewInit {
     });
   }
 
+  private formatDate(date: string): string {
+    const selectedDate = new Date(date);
+    const day = selectedDate.getDate().toString().padStart(2, '0');
+    const month = (selectedDate.getMonth() + 1).toString().padStart(2, '0');
+    const year = selectedDate.getFullYear();
+  
+    return `${day}.${month}.${year}.`;
+  }
 
 
   private updateDataSource(
@@ -112,7 +123,7 @@ export class ReservationManagerComponent implements AfterViewInit {
       dataSource.sort = sort;
       return;
     }
-  
+    
     const roomNameRequests = reservations.map(reservation => this.roomService.getRoomNamesByIds(reservation.roomIds));
   
     forkJoin(roomNameRequests).subscribe((roomNamesArray: string[][]) => {
@@ -121,8 +132,10 @@ export class ReservationManagerComponent implements AfterViewInit {
         const endTime = reservation.endTime;
         const timeSlot = `${startTime} - ${endTime}`;
         const roomNames = roomNamesArray[index].join(', ');
-  
-        return { ...reservation, timeSlot, roomNames };
+        const formattedDate = reservation.date ? this.formatDate(reservation.date) : '';
+
+        
+        return { ...reservation, timeSlot, roomNames, date: formattedDate };
       });
   
       dataSource.data = formattedReservations;
