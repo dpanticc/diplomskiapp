@@ -230,6 +230,8 @@ export class ReservationsComponent {
       this.rooms = rooms; 
     });
   }
+
+  this.thirdFormGroup.reset();
 }
 
   onSelectedRoomsChange(selectedRooms: Room[]) {
@@ -241,7 +243,7 @@ export class ReservationsComponent {
     this.roomSelected = selected;
     this.updateRoomSelectedValidator(); // Update the validator when roomSelected changes
 
-  }
+  } 
 
   private updateRoomSelectedValidator() {
     const validator = roomSelectedValidator(this.roomSelected);
@@ -258,14 +260,31 @@ export class ReservationsComponent {
   
   onNextButtonClick() {
     if (this.chosenDate && this.chosenEndTime && this.chosenStartTime) {
-      const selectedDate = new Date(this.chosenDate);
+      const selectedDate = this.chosenDate;
   
       // Format date in 'yyyy-MM-dd'
       const formattedDate = this.formatDate(selectedDate);
       console.log(formattedDate);
       const startTime = this.chosenStartTime;
-      const endTime = this.chosenEndTime;
-  
+    const endTime = this.chosenEndTime;
+
+    // Parse start time and end time strings to Date objects
+    const startDateObj = new Date(`${formattedDate} ${startTime}`);
+    const endDateObj = new Date(`${formattedDate} ${endTime}`);
+
+    // Add one second to start time
+    startDateObj.setSeconds(startDateObj.getSeconds());
+
+    // Add one second to end time
+    endDateObj.setSeconds(endDateObj.getSeconds());
+
+    // Convert the updated Date objects back to formatted strings
+    const updatedStartTime = this.formatTime(startDateObj);
+    const updatedEndTime = this.formatTime(endDateObj);
+
+    console.log(updatedStartTime);
+    console.log(updatedEndTime);
+
       this.roomService.getAvailableRooms(formattedDate, startTime, endTime)
         .subscribe((availableRooms: Room[]) => {
           // Now, availableRooms contains rooms that are not reserved during the specified time
@@ -276,11 +295,19 @@ export class ReservationsComponent {
     }
 }
 
+formatTime(date:any) {
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  const seconds = date.getSeconds().toString().padStart(2, '0');
+  return `${hours}:${minutes}:${seconds}`;
+}
+
 // Add this method to your component class
-private formatDate(date: Date): string {
-  const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const day = date.getDate().toString().padStart(2, '0');
+private formatDate(date: string): string {
+  const selectedDate = new Date(date);
+  const year = selectedDate.getFullYear();
+  const day = (selectedDate.getMonth() + 1).toString().padStart(2, '0');
+  const month = selectedDate.getDate().toString().padStart(2, '0');
   return `${year}-${month}-${day}`;
 }
 
@@ -326,7 +353,7 @@ private formatDate(date: Date): string {
             });
 
             dialogRef.afterClosed().subscribe(result => {
-                if (result) {
+                if (result === true) {
                     // User confirmed, proceed with reservation creation
                     this.stepper.next();
                 } else {

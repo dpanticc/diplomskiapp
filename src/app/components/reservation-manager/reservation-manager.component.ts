@@ -51,13 +51,11 @@ export class ReservationManagerComponent implements AfterViewInit {
 
 
    
-    console.log("poziv 1")
 
   }
 
   ngAfterViewInit() {
     setTimeout(() => {
-      console.log("poziv 2");
       this.cdr.detectChanges();
       this.fetchData();
     }, 100);
@@ -93,6 +91,9 @@ export class ReservationManagerComponent implements AfterViewInit {
     this.reservationService.getPendingReservations().subscribe((reservations) => {
       this.updateDataSource(reservations, this.dataSourceRequested, this.paginatorRequest, this.sortRequest);
       console.log("Pending Reservations:", reservations);
+      reservations.forEach(reservation => {
+        console.log("Reservation:", reservation);
+      });
       console.log("Data Source Requested Length:", this.dataSourceRequested.data.length);
     });
   }
@@ -173,3 +174,13 @@ export class ReservationManagerComponent implements AfterViewInit {
     });
   }
 }
+
+
+/*[12:20 PM] Dušan Pantić
+pa u sustini to je to, samo da odradim krajnji pregled rezervacija sa novim modelom, al to je par stvarcica
+[12:21 PM] Dušan Pantić
+i da povezem sa mejlom otkaz/zakazivanje rezervacija
+[12:21 PM] Dušan Pantić
+imam jos neku validaciju ako imaju dva zahteva rezervacije koje se poklapaju, pa kako cu to da resim 
+[12:21 PM] Dušan Pantić
+jer ako se prihvati jedna, onda druga mora da se odbije*/

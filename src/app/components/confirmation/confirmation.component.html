@@ -1,20 +1,20 @@
-<div class="dialog-items">
-    <h1 mat-dialog-title>{{ data.titlemessage }}</h1>
-    <div mat-dialog-content>
-      <p>Name: {{ data.reservationData.name }}</p>
-      <p>Purpose: {{ data.reservationData.purpose }}</p>
-      <p>Rooms:</p>
-      <ul>
-        <li *ngFor="let room of data.selectedRooms">{{ room.name }}</li>
-    </ul>     
-     <h3>Requested reservation time:</h3>
-      <p>Date: {{ data.timeSlotData.date }}</p>
-      <p>Time: {{ data.timeSlotData.startTime }} - {{ data.timeSlotData.endTime }}</p>
+  <div class="dialog-items">
+      <h1 mat-dialog-title>{{ data.titlemessage }}</h1>
+      <div mat-dialog-content>
+        <p>Name: {{ data.reservationData.name }}</p>
+        <p>Purpose: {{ data.reservationData.purpose }}</p>
+        <p>Rooms:</p>
+        <ul>
+          <li *ngFor="let roomName of roomNames">{{ roomName }}</li>
+        </ul>   
+      <h3>Requested reservation time:</h3>
+        <p>Date: {{ data.timeSlotData.date }}</p>
+        <p>Time: {{ data.timeSlotData.startTime }} - {{ data.timeSlotData.endTime }}</p>
 
+      </div>
+      <div mat-dialog-actions class="dialog-buttons">
+        <button mat-raised-button color="primary" mat-button (click)="onYesClick()">Confirm</button>
+        <button mat-raised-button color="basic" class="mat-button" (click)="onNoClick()">Cancel</button>
+      </div>
     </div>
-    <div mat-dialog-actions class="dialog-buttons">
-      <button mat-raised-button color="primary" mat-button (click)="onYesClick()">Confirm</button>
-      <button mat-raised-button color="basic" class="mat-button" (click)="onNoClick()">Cancel</button>
-    </div>
-  </div>
-  
+    
