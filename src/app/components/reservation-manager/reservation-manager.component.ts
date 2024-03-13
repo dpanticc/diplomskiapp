@@ -107,7 +107,7 @@ export class ReservationManagerComponent implements AfterViewInit {
     const month = (selectedDate.getMonth() + 1).toString().padStart(2, '0');
     const year = selectedDate.getFullYear();
   
-    return `${day}.${month}.${year}.`;
+    return `${month}.${day}.${year}.`;
   }
 
 
@@ -187,13 +187,3 @@ export class ReservationManagerComponent implements AfterViewInit {
     });
   }
 }
-
-
-/*[12:20 PM] Dušan Pantić
-pa u sustini to je to, samo da odradim krajnji pregled rezervacija sa novim modelom, al to je par stvarcica
-[12:21 PM] Dušan Pantić
-i da povezem sa mejlom otkaz/zakazivanje rezervacija
-[12:21 PM] Dušan Pantić
-imam jos neku validaciju ako imaju dva zahteva rezervacije koje se poklapaju, pa kako cu to da resim 
-[12:21 PM] Dušan Pantić
-jer ako se prihvati jedna, onda druga mora da se odbije*/

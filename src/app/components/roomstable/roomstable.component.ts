@@ -30,6 +30,8 @@
       if (changes['rooms'] && changes['rooms'].currentValue) {
         const receivedRooms = changes['rooms'].currentValue;
         this.dataSource.data = receivedRooms;
+        this.clearSelectedRooms();
+
       }
     }
 

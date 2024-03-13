@@ -135,6 +135,7 @@ export class ReservationsComponent {
 
   onEndTimeChange(selectedEndTime: string) {
     this.chosenEndTime = selectedEndTime;
+    this.onNextButtonClick();
   }
   
   onStartTimeChange(selectedStartTime: string): void {
@@ -143,6 +144,7 @@ export class ReservationsComponent {
     this.endTimeOptions = this.startTimeOptions.slice(selectedIndex + 1);
     this.secondFormGroup.get('endTime')?.setValue(null); // Reset the selected End Time
     this.chosenStartTime = selectedStartTime; // Set chosenTime when Start Time changes
+    this.onNextButtonClick();    
   }
  
  
@@ -229,7 +231,6 @@ export class ReservationsComponent {
       this.rooms = rooms; 
     });
   }
-
   this.thirdFormGroup.reset();
 }
 
@@ -259,36 +260,21 @@ export class ReservationsComponent {
   
   onNextButtonClick() {
     if (this.chosenDate && this.chosenEndTime && this.chosenStartTime) {
-      const selectedDate = this.chosenDate;
-  
-      // Format date in 'yyyy-MM-dd'
-      const formattedDate = this.formatDate(selectedDate);
-      console.log(formattedDate);
-      const startTime = this.chosenStartTime;
-    const endTime = this.chosenEndTime;
 
     // Parse start time and end time strings to Date objects
-    const startDateObj = new Date(`${formattedDate} ${startTime}`);
-    const endDateObj = new Date(`${formattedDate} ${endTime}`);
-
+    const startDateObj = new Date(`${this.chosenDate} ${this.chosenStartTime}`);
+    const endDateObj = new Date(`${this.chosenDate} ${this.chosenEndTime}`);
+      
     // Add one second to start time
     startDateObj.setSeconds(startDateObj.getSeconds());
-
-    // Add one second to end time
     endDateObj.setSeconds(endDateObj.getSeconds());
 
-    // Convert the updated Date objects back to formatted strings
-    const updatedStartTime = this.formatTime(startDateObj);
-    const updatedEndTime = this.formatTime(endDateObj);
-
-    console.log(updatedStartTime);
-    console.log(updatedEndTime);
-
-      this.roomService.getAvailableRooms(formattedDate, startTime, endTime)
+      this.roomService.getAvailableRooms(this.chosenDate, this.chosenStartTime, this.chosenEndTime)
         .subscribe((availableRooms: Room[]) => {
           // Now, availableRooms contains rooms that are not reserved during the specified time
           console.log('Available Rooms:', availableRooms);
           this.rooms = availableRooms;
+          this.selectedRooms = [];
           // You can use this data as needed in your application
         });
     }
@@ -301,14 +287,6 @@ formatTime(date:any) {
   return `${hours}:${minutes}:${seconds}`;
 }
 
-// Add this method to your component class
-private formatDate(date: string): string {
-  const selectedDate = new Date(date);
-  const year = selectedDate.getFullYear();
-  const day = (selectedDate.getMonth() + 1).toString().padStart(2, '0');
-  const month = selectedDate.getDate().toString().padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
 
 
   onFinishButtonClick() {
