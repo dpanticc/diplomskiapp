@@ -1,15 +1,15 @@
 a {
-    width: 180px;
+    width: 170px;
     box-sizing: border-box;
   }
-  
+    
   .mdc-list {
     padding: 0px;
   }
   
   .nav-list-item {
     margin-top: 20px;
-    width: 180px;
+    width: 200px;
     box-sizing: border-box;
     display: flex;
     align-items: center;

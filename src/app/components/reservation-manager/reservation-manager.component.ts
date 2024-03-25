@@ -9,16 +9,18 @@ import { MatButtonModule } from '@angular/material/button';
 import { ReservationService } from 'src/app/services/reservation/reservation.service';
 import { ReservationDTO } from 'src/app/models/reservationDTO.model';
 import { RoomService } from 'src/app/services/room/room.service';
-import { forkJoin, timeout } from 'rxjs';
+import { EMPTY, Observable, catchError, forkJoin, of, switchMap, tap, throwError, timeout } from 'rxjs';
 import { NotificationService } from 'src/app/services/notification/notification.service';
 import { CommonModule } from '@angular/common';
 import { MAT_DATE_FORMATS } from '@angular/material/core';
 import { MY_DATE_FORMATS } from '../reservations/custom.date.adapter';
+import { DialogComponent } from '../dialog/dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-reservation-manager',
   standalone: true,
-  imports: [MatFormFieldModule, MatInputModule, MatTableModule, MatSortModule, MatPaginatorModule, MatCardModule, MatButtonModule, CommonModule],
+  imports: [MatFormFieldModule, MatInputModule, MatTableModule, MatSortModule, DialogComponent, MatPaginatorModule, MatCardModule, MatButtonModule, CommonModule],
   templateUrl: './reservation-manager.component.html',
   styleUrl: './reservation-manager.component.css',
   providers: [{provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS}]
@@ -40,7 +42,7 @@ export class ReservationManagerComponent implements AfterViewInit {
     private reservationService: ReservationService,
     private roomService: RoomService,
     private notificationService: NotificationService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef, private dialog: MatDialog
   ) {
     this.dataSourceRequested = new MatTableDataSource<ReservationDTO>([]);
     this.dataSourceAccepted = new MatTableDataSource<ReservationDTO>([]);
@@ -51,9 +53,6 @@ export class ReservationManagerComponent implements AfterViewInit {
       this.dataSourceRequested.paginator = this.paginatorRequest;
       this.dataSourceAccepted.paginator = this.paginatorAccepted;
       this.fetchData();
-
-
-   
 
   }
 
@@ -101,15 +100,7 @@ export class ReservationManagerComponent implements AfterViewInit {
     });
   }
 
-  private formatDate(date: string): string {
-    const selectedDate = new Date(date);
-    const day = selectedDate.getDate().toString().padStart(2, '0');
-    const month = (selectedDate.getMonth() + 1).toString().padStart(2, '0');
-    const year = selectedDate.getFullYear();
   
-    return `${month}.${day}.${year}.`;
-  }
-
 
   private updateDataSource(
     reservations: ReservationDTO[],
@@ -132,7 +123,7 @@ export class ReservationManagerComponent implements AfterViewInit {
         const endTime = reservation.endTime;
         const timeSlot = `${startTime} - ${endTime}`;
         const roomNames = roomNamesArray[index].join(', ');
-        const formattedDate = reservation.date ? this.formatDate(reservation.date) : '';
+        const formattedDate = reservation.date;
 
         
         return { ...reservation, timeSlot, roomNames, date: formattedDate };
@@ -169,13 +160,67 @@ export class ReservationManagerComponent implements AfterViewInit {
     }
   }
 
+  
   acceptReservation(reservation: any) {
-    this.reservationService.acceptReservation(reservation.reservationId).subscribe(() => {
-      this.notificationService.getMessage(reservation.name + ' has been successfully reserved.');
-      this.fetchPendingReservations();
-      this.fetchAcceptedReservations();
+  return this.reservationService.acceptReservation(reservation.reservationId)
+    .pipe(
+      catchError((error: any): Observable<string> => {
+        if (error.status === 409) {
+          const dialogRef = this.dialog.open(DialogComponent, {
+            width: '250px',
+            data: { message: 'There is already a reservation made for that room and time. Do you want to inform the user and send an email?' }
+          });
+  
+          return dialogRef.afterClosed().pipe(
+            switchMap(result => {
+              if (result) {
+                return this.reservationService.declineReservation(reservation.reservationId).pipe(
+                  tap(() => {
+                    // Only send a notification if the reservation was canceled
+                    // Otherwise, do not send any notification
+                    this.notificationService.getMessage('Reservation canceled');
+                  }),
+                  catchError(cancelError => {
+                    console.error('Error canceling reservation:', cancelError);
+                    return throwError(cancelError);
+                  }),
+                  switchMap(() => of('Reservation canceled'))
+                );
+              } else {
+                // Do not send any notification if the user chooses not to cancel the reservation
+                return of('Reservation not canceled');
+              }
+            }),
+            catchError(dialogError => {
+              console.error('Error with dialog:', dialogError);
+              return of('Failed to handle dialog: ' + dialogError);
+            })
+          );
+        } else {
+          console.error('Error accepting reservation:', error);
+          this.notificationService.getMessage('Failed to accept reservation.');
+          return throwError('Failed to accept reservation.');
+        }
+      }),
+      switchMap((message: any) => {
+        if (message === 'Reservation canceled') {
+          this.fetchPendingReservations();
+          this.fetchAcceptedReservations();
+          return of(message);
+        }  else if (message === 'Reservation not canceled') {
+          // Do not send any notification for not canceled reservation
+          return of();
+        }else {
+          this.fetchPendingReservations();
+          this.fetchAcceptedReservations();
+          return of('Successfully reserved');
+        }
+      })
+    )
+    .subscribe((message: string) => {
+      this.notificationService.getMessage(message);
     });
-  }
+}
 
   declineReservation(reservation: any) {
     this.reservationService.declineReservation(reservation.reservationId).subscribe(() => {
