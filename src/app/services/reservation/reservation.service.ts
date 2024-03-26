@@ -4,21 +4,17 @@ import { Observable } from 'rxjs/internal/Observable';
 import { ReservationData } from 'src/app/models/reservation.model';
 import { TimeSlotData } from 'src/app/models/time-slot.model';
 import { ReservationDTO } from 'src/app/models/reservationDTO.model';
-import { catchError, throwError } from 'rxjs';
+import { catchError, of, throwError } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
 export class ReservationService {
-  
-  
+
   private baseUrl = 'http://localhost:8080/api/user';
   private adminUrl = 'http://localhost:8080/api/admin';
 
 
   constructor(private http: HttpClient) {}
-
-
-
 
   createReservation(reservationData: ReservationData, selectedTimeSlot: TimeSlotData): Observable<any> {
     const url = `${this.baseUrl}/reservations`;
@@ -67,5 +63,28 @@ export class ReservationService {
 
     declineReservation(reservationId: number): Observable<void> {
       const url = `${this.adminUrl}/reservations/decline/${reservationId}`;
-      return this.http.put<void>(url, null);    }
+      return this.http.put<void>(url, null);    
+    }
+
+    getUsersReservations(username: string | null): Observable<ReservationDTO[]> {
+      // Check if username is null or empty
+      if (!username) {
+        // If username is null or empty, return an empty observable
+        return of([]);
+      }
+    
+      // Construct the URL for fetching user's reservations
+      const url = `${this.baseUrl}/reservations/${username}`;
+    
+      // Make the HTTP GET request to fetch user's reservations
+      return this.http.get<ReservationDTO[]>(url).pipe(
+        catchError((error) => {
+          console.error('Error fetching user\'s reservations:', error);
+          // You can log the error or show a user-friendly message
+          return throwError('Failed to fetch user\'s reservations. Please try again later.');
+        })
+      );
+    }
   }
+
+  

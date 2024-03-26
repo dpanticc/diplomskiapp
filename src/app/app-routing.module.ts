@@ -12,6 +12,7 @@ import { RoomsComponent } from './components/rooms/rooms.component';
 import { UsersComponent } from './components/users/users.component';
 import { AccountComponent } from './components/account/account.component';
 import { ReservationManagerComponent } from './components/reservation-manager/reservation-manager.component';
+import { ReservationsUserComponent } from './components/reservations-user/reservations-user.component';
 
 export const routes: Routes = [
 
@@ -20,7 +21,8 @@ export const routes: Routes = [
   {path: 'home', component: HomeComponent,  
     children: [
       { path: 'account', component: AccountComponent },
-      { path: 'reservations', component: ReservationsComponent },
+      { path: 'reservation-request', component: ReservationsComponent },
+      { path: 'reservations', component: ReservationsUserComponent }
     ],
     canActivate:[AuthGuard, UserGuard]},
   {

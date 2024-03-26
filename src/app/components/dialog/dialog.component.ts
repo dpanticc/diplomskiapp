@@ -31,4 +31,6 @@ export class DialogComponent {
   onYesClick(): void {
     this.dialogRef.close(true);
   }
+
+  
 }

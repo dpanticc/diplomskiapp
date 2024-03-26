@@ -25,7 +25,7 @@ import { MatDialog } from '@angular/material/dialog';
   styleUrl: './reservation-manager.component.css',
   providers: [{provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS}]
 })
-export class ReservationManagerComponent implements AfterViewInit {
+export class ReservationManagerComponent implements AfterViewInit, OnInit {
   displayedColumnsRequest: string[] = ['name', 'purpose', 'room', 'date', 'timeSlot', 'username', 'accept-decline'];
   displayedColumns: string[] = ['name', 'purpose', 'room', 'date', 'timeSlot', 'username', 'cancel'];
 
@@ -61,6 +61,13 @@ export class ReservationManagerComponent implements AfterViewInit {
       this.cdr.detectChanges();
       this.fetchData();
     }, 100);
+  }
+
+  ngOnInit() {
+    setTimeout(() => {
+      this.cdr.detectChanges();
+      this.fetchData();
+    }, 500);
   }
 
 
@@ -222,13 +229,23 @@ export class ReservationManagerComponent implements AfterViewInit {
     });
 }
 
-  declineReservation(reservation: any) {
-    this.reservationService.declineReservation(reservation.reservationId).subscribe(() => {
-      this.fetchPendingReservations();
-      this.fetchAcceptedReservations();
-      console.log('decline: ' +reservation);
+declineReservation(reservation: any) {
+  const dialogRef = this.dialog.open(DialogComponent, {
+    width: '350px',
+    data: { message: 'Are you sure you want to cancel the '+ reservation.name+' reservation?' }
+  });
 
-      this.notificationService.getMessage(reservation.name + ' has been canceled.');
-    });
-  }
+  dialogRef.afterClosed().subscribe(result => {
+    if (result) { // User confirmed to decline the reservation
+      this.reservationService.declineReservation(reservation.reservationId).subscribe(() => {
+        this.fetchPendingReservations();
+        this.fetchAcceptedReservations();
+        console.log('decline: ' + reservation);
+
+        this.notificationService.getMessage(reservation.name + ' has been canceled.');
+      });
+    } else {
+    }
+  });
+}
 }

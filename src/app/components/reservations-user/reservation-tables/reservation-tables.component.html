@@ -1,0 +1,39 @@
+<table mat-table [dataSource]="dataSource" matSort class="table" *ngIf="dataSource.data.length > 0">
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
+        <td mat-cell *matCellDef="let row"> {{row.reservationDTO.name}} </td>
+    </ng-container>
+
+    <!-- Purpose Column -->
+    <ng-container matColumnDef="purpose">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Purpose </th>
+        <td mat-cell *matCellDef="let row"> {{row.reservationDTO.purpose}} </td>
+    </ng-container>
+
+    <!-- Room Column -->
+    <ng-container matColumnDef="room">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Room </th>
+        <td mat-cell *matCellDef="let row"> {{row.roomNames}} </td>
+    </ng-container>
+
+    <!-- Date Column -->
+    <ng-container matColumnDef="date">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Date </th>
+        <td mat-cell *matCellDef="let row"> {{row.timeSlotDTO.date}} </td>
+    </ng-container>
+
+    <!-- Time-slot Column -->
+    <ng-container matColumnDef="timeSlot">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Time-slot </th>
+        <td mat-cell *matCellDef="let row"> {{row.timeSlotDTO.startTime}} - {{row.timeSlotDTO.endTime}} </td>
+    </ng-container>
+
+
+    <!-- Define more columns as needed -->
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+
+<mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" [pageSize]="10" [length]="dataSource.data.length"></mat-paginator>

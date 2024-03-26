@@ -1,0 +1,38 @@
+<div>
+    <mat-horizontal-stepper linear #stepper editable="false">
+      <mat-step [stepControl]="activeStep">
+        <ng-template matStepLabel>Active reservations</ng-template> 
+        <mat-card class="backCardReservations">   
+          <ng-container *ngIf="activeReservations && activeReservations.length > 0; else emptyTable">
+            <app-reservation-tables [reservations]="activeReservations"></app-reservation-tables>
+          </ng-container>
+          <ng-template #emptyTable>
+            <p>No active reservations found.</p>
+          </ng-template>
+        </mat-card>
+      </mat-step>
+      <mat-step [stepControl]="pendingStep"> 
+        <ng-template matStepLabel>Pending reservations</ng-template> 
+        <mat-card class="backCardReservations">   
+          <ng-container *ngIf="pendingReservations && pendingReservations.length > 0; else emptyTablePending">
+            <app-reservation-tables [reservations]="pendingReservations"></app-reservation-tables>
+          </ng-container>
+          <ng-template #emptyTablePending>
+            <p>No pending reservations found.</p>
+          </ng-template>
+        </mat-card>
+      </mat-step>
+      <mat-step [stepControl]="canceledStep">
+        <ng-template matStepLabel>Canceled reservations</ng-template>
+        <mat-card class="backCardReservations">   
+          <ng-container *ngIf="canceledReservations && canceledReservations.length > 0; else emptyTableCancel">
+            <app-reservation-tables [reservations]="canceledReservations"></app-reservation-tables>
+          </ng-container>
+          <ng-template #emptyTableCancel>
+            <p>No canceled reservations found.</p>
+          </ng-template>
+        </mat-card>
+      </mat-step>
+    </mat-horizontal-stepper>
+ </div>
+ 

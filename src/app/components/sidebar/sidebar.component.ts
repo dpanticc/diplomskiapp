@@ -31,10 +31,12 @@ export class SidebarComponent {
     { label: 'Rooms', path: 'rooms',  icon: 'meeting_room' },
     { label: 'Reservations', path: 'reservation-manager', icon: 'event' }
   ];
-
+ 
   regularUserLinks = [
-    { label: 'Reservations', path: 'reservations',  icon: 'event' },
-    { label: 'Account', path: 'account',  icon: 'account_circle' }
+    { label: 'New request', path: 'reservation-request',  icon: 'add_circle' },
+    { label: 'My reservations', path:'reservations', icon:'event'},
+    { label: 'Account', path: 'account',  icon: 'account_circle' },
+    
   ];
   activeLink: string | undefined;
   background: ThemePalette = undefined;
