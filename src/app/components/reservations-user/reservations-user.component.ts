@@ -54,7 +54,6 @@ export class ReservationsUserComponent implements AfterViewInit, OnInit {
     this.reservationService.getUsersReservations(username).subscribe({
       
       next: (reservations: any[]) => {
-        const roomNameRequests = reservations.map(reservation => this.roomService.getRoomNamesByIds(reservation.roomIds));
 
         console.log('All Reservations:', reservations);
   

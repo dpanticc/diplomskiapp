@@ -18,8 +18,47 @@
   </mat-drawer>
   
   <div class="content-area">
-    <router-outlet></router-outlet>
-
+    <!-- Display welcome page content only on the home route -->
+    <ng-container *ngIf="isHomeRoute()">
+      <!-- Welcome Page Content -->
+      <div class="welcome-container">
+        <h1>Welcome to ReservationApp!</h1>
+        <p>This application is designed to help you manage university room reservations efficiently.</p>
+        <p>Get started by exploring the features:</p>
+      
+        <div class="feature-list">
+          <mat-card class="feature-card">
+            <mat-card-header>
+              <mat-card-title class="title">Make Reservations</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <p>Easily make and manage reservations for various purposes.</p>
+            </mat-card-content>
+          </mat-card>
+      
+          <mat-card class="feature-card">
+            <mat-card-header>
+              <mat-card-title class="title">View Rooms</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <p>Explore available rooms and their details.</p>
+            </mat-card-content>
+          </mat-card>
+      
+          <mat-card class="feature-card">
+            <mat-card-header>
+              <mat-card-title class="title">User Management</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <p>Manage users and their access levels.</p>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+    </ng-container>
+    
+    <!-- Router outlet for other components -->
+    <router-outlet *ngIf="!isHomeRoute()"></router-outlet>
   </div>
   
 </mat-drawer-container>

@@ -67,11 +67,6 @@ export class ReservationService {
     }
 
     getUsersReservations(username: string | null): Observable<ReservationDTO[]> {
-      // Check if username is null or empty
-      if (!username) {
-        // If username is null or empty, return an empty observable
-        return of([]);
-      }
     
       // Construct the URL for fetching user's reservations
       const url = `${this.baseUrl}/reservations/${username}`;
